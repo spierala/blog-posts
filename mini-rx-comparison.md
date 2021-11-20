@@ -118,21 +118,40 @@ export class CounterQuery extends Query<CounterState> {
 }
 ```
 The Akita setup is the most boilerplaty. Extending `Store` is the same as with Component Store. 
-But to access the state you have to extend `Query` and provide the store instance.
+But to access the state you have to extend `Query` and provide the `Store` instance.
 
-### 1.) Local or global
+Also, the components need to talk to both the `Query` instance and the `Store` instance in order to read and write state.
+
+### 1.) Local or global state.
 #### MiniRx Feature Store
-// TODO
-// global, FS is also global
+MiniRx at its heart is a Redux Store with one global state object ("Single source of truth"). 
+MiniRx Feature Store registers a "slice" of state into the global state object.
+Feature Stores are destroyable: Their state can be removed from the global state object. Therefore, Feature Stores can be used for Local Component State as well. See an example in the [Angular demo](https://angular-demo.mini-rx.io/#/counter).
 
 #### Component Store
-ComponentStore is really only concerned with local state and that state is totally independent from @ngrx/store (Redux, global state management). Therefore it is not possible to inspect ComponentStore state with Redux Dev Tools.
+ComponentStore is more concerned with local state and that state is totally independent of @ngrx/store 
+(which is the NgRx Redux solution and deals with global state management). 
+#### Akita
+The Akita Stores live independently next to each other. There is no real global state. 
 
+### 2.) Redux Dev Tools
+#### MiniRx Feature Store
+Every Feature Store state becomes part of the global state object. The global state can be inspected with the Redux Dev Tools.
+
+#### Component Store
+There is no official solution for ComponentStore to inspect state with Redux Dev Tools.
+
+#### Akita
+The separate Store states are merged into one big state object to make all state inspectable with the Redux Dev Tools (https://github.com/datorama/akita/blob/master/libs/akita/src/lib/devtools.ts).
+
+### 2.) Cross State Selectors
+#### MiniRx Feature Store
+Because FeatureStore state integrates into the global state object it can be selected at anytime with `store.select`.
+
+#### Component Store
 How do we combine state from different ComponentStores? By using RxJS operators like `combineLatest` or `withLatestFrom`.
 
 #### Akita
-The Akita Stores live independently next to each other. There is no real global state. However the separate Store states are merged into one big state object to make all state inspectable with the Redux Dev Tools (https://github.com/datorama/akita/blob/master/libs/akita/src/lib/devtools.ts).
-
 How do we combine state from different Akita Stores? Again: By using RxJS operators like `combineLatest` or `withLatestFrom`.
 
 ### 2.) Memoized Selectors
@@ -160,7 +179,7 @@ Yes, there are Effects: https://ngrx.io/guide/component-store/effect
 There are Effects: https://datorama.github.io/akita/docs/angular/effects
 However this clearly looks like an afterthought. It almost looks and feels like @ngrx/effects and does not fit so well into the rest of the Akita API.
 
-###4.) Undo
+### 4.) Undo
 #### MiniRx Feature Store
 MiniRx has the UndoExtension to support the undo of state changes. This is especially helpful if you want to undo optimistic updates (e.g. when an API call fails). Both the FeatureStore and the Redux API can undo specific state changes.
 
@@ -182,3 +201,19 @@ There is nothing in ComponentStore which can enforce immutability.
 
 #### Akita
 Akita "deepfreezes" the state object when state is updated (only in DEV mode: https://github.com/datorama/akita/blob/master/libs/akita/src/lib/store.ts#L181
+
+### 6.) Framework-agnostic
+#### MiniRx Feature Store
+MiniRx is framework-agnostic. You can use MiniRx with any framework or even without framework.
+
+See here the MiniRx Svelte Demo: https://github.com/spierala/mini-rx-svelte-demo
+
+#### Component Store
+Component Store is tied to Angular. Angular is a peer dependency in the [package.json](https://github.com/ngrx/platform/blob/master/modules/component-store/package.json#L25).
+
+#### Akita
+Akita is also framework-agnostic. You can see in this article how Svelte and Akita play together: [Supercharge Your Svelte State Management with Akita](https://netbasal.com/supercharge-your-svelte-state-management-with-akita-f1f9de5ef43d)
+
+
+
+// TODO major versions
