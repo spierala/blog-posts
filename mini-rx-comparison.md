@@ -1,10 +1,8 @@
-// TODO TLDR
-
 *TLDR* 
 MiniRx "Feature Stores" offer simple yet powerful state management.
 How does MiniRx Feature Store compare to @ngrx/component-store and @datorama/akita?
 
-*Disclaimer: I am the maintainer of MiniRx Store, I try to be fair, but I it can be difficult ;)
+*Disclaimer: I am the maintainer of MiniRx Store, I try to be fair, but it can be difficult ;)
 To be clear: ComponentStore and Akita are great state management libraries. But there might be situations where MiniRx Store is just a better fit.*
 
 ## What is MiniRx?
@@ -26,7 +24,7 @@ MiniRx scales nicely with your state management requirements:
 
 In most cases you can default to the `FeatureStore` API and fall back to the `Redux API` to implement the really complex features in your application.
 
-### Links
+#### Links
 - 🤓 Learn more about MiniRx on the [docs site](https://mini-rx.io)
 - ⭐ [MiniRx on GitHub](https://github.com/spierala/mini-rx-store)
 - 🚀 See it in action in the [Angular Demo](https://angular-demo.mini-rx.io/)
@@ -71,7 +69,7 @@ Mhhh..., this sounds all very similar, but where are the differences then?
 What does the basic setup of a reactive "State Service" look like?
 
 All setups share the same ingredients: A state interface and initial state.
-```
+```typescript
 interface CounterState {
     count: number;
 }
@@ -82,7 +80,7 @@ const initialState: CounterState = {
 ```
 
 #### MiniRx Feature Store
-```
+```typescript
 @Injectable({providedIn: 'root'})
 export class CounterStateService extends FeatureStore<CounterState> {
 
@@ -105,7 +103,7 @@ MiniRx Feature Store has to provide a "feature key": 'counter' (see `super('coun
 The key is used to register the "counter" state in the global state object.
 
 #### Component Store
-```
+```typescript
 @Injectable({providedIn: 'root'})
 export class CounterStateService extends ComponentStore<CounterState> {
 
@@ -129,7 +127,7 @@ The Component Store setup looks very similar, however the feature key is not pro
 because every `ComponentStore` instance lives independently.
 
 #### Akita
-```
+```typescript
 @Injectable({providedIn: 'root'})
 @StoreConfig({ name: 'counter' })
 export class CounterStateService extends Store<CounterState> {
@@ -165,13 +163,13 @@ Also, the components need to talk to both the `Query` instance and the `Store` i
 Regarding the basic setup, let's also look the corresponding bundle sizes (using source-map-explorer). 
 
 #### MiniRx Feature Store
-[combined] (152.39 KB)
+combined: 152.39 KB
 
 #### Component Store
-[combined] (152.25 KB)
+combined: 152.25 KB
 
 #### Akita
-[combined] (151.61 KB)
+combined: 151.61 KB
 
 Akita is the most lightweight, and MiniRx is almost 1 KB bigger. 
 But keep in mind that MiniRx Feature Store uses Redux under the hood 
@@ -180,18 +178,18 @@ and the Redux API is always available. Using the MiniRx Redux API will not add m
 ### 2.1. Bundle Sizes when adding Redux
 
 #### MiniRx Feature Store + Store API (Store + Effects) using [Angular Integration (mini-rx-store-ng)](https://mini-rx.io/docs/angular#register-effects)
-[combined] (156.9 KB)
+combined: 156.9 KB
 
 #### NgRx Component Store + NgRx Store
-[combined] (164.17 KB)
+combined: 164.17 KB
 
 #### NgRx Component Store + NgRx Store + NgRx Effects
-[combined] (171.45 KB)
+combined: 171.45 KB
 
 You can review the different setups in this repo and run source-map-explorer yourself: https://github.com/spierala/mini-rx-comparison
 
 ### 3. Local or global state
-How are the different stores relate to local (component state) and global state? What is the store lifespan?
+How do the different stores relate to local (component state) and global state? What is the store lifespan?
 
 #### MiniRx Feature Store
 MiniRx at its heart is a Redux Store with one global state object ("Single source of truth"). 
@@ -237,9 +235,12 @@ See the Akita combineQueries source [here](https://github.com/datorama/akita/blo
 
 ### 6. Memoized Selectors
 
-Memoized selectors can help to improve performance by reducing the number of computations of selected state.
-Examples for memoized selectors: [NgRx selectors](https://ngrx.io/guide/store/selectors), [Redux Reselect](https://github.com/reduxjs/reselect)
-The common selectors API (e.g. `createSelector`) is great for Composition: Build selectors by combining existing selectors.
+Memoized selectors can help to improve performance by reducing the number of computations of selected state. 
+The most common selectors API (`createSelector`) is great for Composition: Build selectors by combining existing selectors.
+
+Examples for memoized selectors: 
+- [NgRx Store selectors](https://ngrx.io/guide/store/selectors)
+- [Redux Reselect](https://github.com/reduxjs/reselect)
 
 #### MiniRx Feature Store
 MiniRx comes with memoized selectors out-of-the-box. 
@@ -323,7 +324,5 @@ Feature Stores uses Redux under the hood:
 Behind the scenes a Feature Store is creating a feature reducer and a "setState" action.
 MiniRx dispatches that action when calling `setState()` and the corresponding feature reducer will update the feature state accordingly.
 
-
-// TODO major versions?
-// Get rid of FIGHT stuff, maybe a softer metaphor
+// TODO
 // Source code links (use specific tag)
