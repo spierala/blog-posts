@@ -13,7 +13,11 @@ MiniRx is a full-blown **Redux** Store powered by RxJS: It includes actions, red
 The Redux pattern is great to manage state at large scale, but it forces us to write boilerplate code (actions, reducers, dispatch actions).
 
 For that reason, MiniRx **Feature Stores** offer a more simple form of state management: 
-we can **bypass Redux boilerplate** and update state straight away with `setState`.
+we can **bypass Redux boilerplate** and interact directly with a corresponding feature state with this API:
+-   `setState()` update the feature state
+-   `select()` select state from the feature state object as RxJS Observable
+-   `effect()` run side effects like API calls and update feature state
+-   `undo()` easily undo setState actions (requires UndoExtension)
 
 MiniRx scales nicely with your state management requirements:
 
@@ -23,36 +27,12 @@ MiniRx scales nicely with your state management requirements:
 In most cases you can default to the `FeatureStore` API and fall back to the `Redux API` to implement the really complex features in your application.
 
 ### Links
-- 🤓 Learn more about MiniRx on the [Docs site](https://mini-rx.io)
+- 🤓 Learn more about MiniRx on the [docs site](https://mini-rx.io)
 - ⭐ [MiniRx on GitHub](https://github.com/spierala/mini-rx-store)
 - 🚀 See it in action in the [Angular Demo](https://angular-demo.mini-rx.io/)
-
-## MiniRx Feature Store
-
-MiniRx Feature Store offers simple yet powerful state management.
-
-### Key concepts
-- **Less Boilerplate**: With the `FeatureStore` API you can update state without writing actions and reducers
-- A Feature Store **manages feature state** directly
-- The state of a Feature Store **integrates into the global state object**
-
-### `FeatureStore` API
-The FeatureStore API is optimized to select and update a feature state directly with a minimum of boilerplate.
-
--   `setState()` update the feature state
--   `select()` select state from the feature state object as RxJS Observable
--   `effect()` run side effects like API calls and update feature state
--   `undo()` easily undo setState actions (requires UndoExtension)
-
-### How does the Feature Store work?
-Feature Stores make use of Redux too: 
-Behind the scenes a Feature Store is creating a feature reducer and a "setState" action. 
-MiniRx dispatches that action when calling `setState()` and the corresponding feature reducer will update the feature state accordingly.
-
-### Links
 - 🤓 [Feature Store docs](https://mini-rx.io/docs/fs-quick-start)
-- 🚀 [MiniRx Basic Tutorial](https://stackblitz.com/edit/mini-rx-store-basic-tutorial?file=index.ts): 
-See how the Redux API and Feature Store API both add to the global state object
+- 🚀 [MiniRx Basic Tutorial on StackBlitz](https://stackblitz.com/edit/mini-rx-store-basic-tutorial?file=index.ts):
+  See how the Redux API and Feature Store API both add to the global state object
 
 ## MiniRx FeatureStore vs. ComponentStore vs. Akita: FIGHT!
 
@@ -60,18 +40,33 @@ Let's shed some light on MiniRx Feature Store by comparing it with two other pop
 
 ## The candidates
 
-#### Component Store (@ngrx/component-store)
+#### Component Store
 ComponentStore is a library that helps to manage local/component state. It can be used as an alternative to the "Service with a Subject" approach. It is build on top of RxJS/ReplaySubject. Services which extend ComponentStore expose state as RxJS Observables (using the `select` method). With the methods `setState` and `patchState` the state can be updated.
 
-#### Akita (@datorama/akita)
-Akita describes itself as a "state management pattern": It offers a set of specialized classes like: `Store`, `Query`, `EntityStore` and more. Akita Store is build on top of RxJS/BehaviorSubject. By using the Akita classes we can build a reactive state service which exposes state as RxJS Observables (using `Query.select`). The `update` method of `Store` is used to update the state.
+Docs: https://ngrx.io/guide/component-store
 
-#### MiniRx Feature Store (mini-rx-store)
-MiniRx is a "hybrid" Store. It uses Redux and RxJS BehaviorSubject under the hood and exposes the powerful Redux "Store"API (which is very similar to @ngrx/store and @ngrx/effects). At the same time MiniRx allows you to bypass the infamous Redux boilerplate with the `FeatureStore` API. You can create a reactive state service by extending FeatureStore. RxJS Observables (returned by the `select` method) inform about state changes and the state can be changed by calling `setState`.
+#### Akita
+Akita describes itself as a "state management pattern": 
+It offers a set of specialized classes like: `Store`, `Query`, `EntityStore` and more. 
+Akita Store is build on top of RxJS/BehaviorSubject. 
+By using the Akita classes we can build a reactive state service which exposes state as RxJS Observables 
+(using `select` on a `Query` instance). The `update` method of `Store` is used to update the state.
+
+Docs: https://datorama.github.io/akita/
+
+#### MiniRx Feature Store
+MiniRx is a "hybrid" Store. It uses Redux and RxJS BehaviorSubject under the hood and 
+exposes the powerful Redux `Store` API (which is very similar to @ngrx/store and @ngrx/effects). 
+At the same time MiniRx allows you to bypass the infamous Redux boilerplate with the `FeatureStore` API. 
+You can create a reactive state service by extending FeatureStore. 
+RxJS Observables (returned by the `select` method) inform about state changes 
+and the state can be changed by calling `setState`.
+
+Docs: https://mini-rx.io/docs/fs-quick-start
 
 Mhhh..., this sounds all very similar, but where are the differences then:
 
-### 0.) Setup
+### 1.) Setup
 
 What does the basic setup of a reactive "State Service" look like?
 
@@ -160,10 +155,39 @@ export class CounterQuery extends Query<CounterState> {
     }
 }
 ```
-The Akita setup is the most boilerplaty. Extending `Store` is the same as with Component Store. 
+The Akita setup is the most boilerplaty. Extending `Store` is similar to the other setups. 
+A feature key is provided via the `@StoreConfig` decorator.
 But to access the state you have to extend `Query` and provide the `Store` instance.
 
 Also, the components need to talk to both the `Query` instance and the `Store` instance in order to read and write state.
+
+### 2.) Bundle Sizes
+Regarding the basic setup, let's also look the corresponding bundle sizes (using source-map-explorer). 
+
+#### MiniRx Feature Store
+[combined] (152.39 KB)
+
+#### Component Store
+[combined] (152.25 KB)
+
+#### Akita
+[combined] (151.61 KB)
+
+Akita is the most lightweight, and MiniRx is roughly 1 KB bigger. 
+But keep in mind that MiniRx Feature Store uses Redux under the hood 
+and the Redux API is always available. Using the MiniRx Redux API will not add much to the total bundle size:
+
+#### MiniRx Feature Store + Store API (Store + Effects) using [Angular Integration (mini-rx-store-ng)](https://mini-rx.io/docs/angular#register-effects)
+[combined] (156.9 KB)
+
+Are you curious to know how much NgRx Store would add to the bundle size, here you go:
+#### NgRx Component Store + NgRx Store
+[combined] (164.17 KB)
+
+#### NgRx Component Store + NgRx Store + NgRx Effects
+[combined] (171.45 KB)
+
+You can review the different setups in this repo and run source-map-explorer yourself: https://github.com/spierala/mini-rx-comparison
 
 ### 1.) Local or global state.
 #### MiniRx Feature Store
@@ -257,6 +281,11 @@ Component Store is tied to Angular. Angular is a peer dependency in the [package
 #### Akita
 Akita is also framework-agnostic. You can see in this article how Svelte and Akita play together: [Supercharge Your Svelte State Management with Akita](https://netbasal.com/supercharge-your-svelte-state-management-with-akita-f1f9de5ef43d)
 
+## Notes
+### How does the Feature Store work?
+Feature Stores uses Redux under the hood:
+Behind the scenes a Feature Store is creating a feature reducer and a "setState" action.
+MiniRx dispatches that action when calling `setState()` and the corresponding feature reducer will update the feature state accordingly.
 
 
 // TODO major versions?
