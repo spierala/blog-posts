@@ -1,21 +1,62 @@
-*TLDR* MiniRx is a relatively new reactive state management library. 
+// TODO TLDR
+
+*TLDR* 
 MiniRx "Feature Stores" offer simple yet powerful state management.
 How does MiniRx Feature Store compare to @ngrx/component-store and @datorama/akita?
 
-// TODO Quick into
-// Redux, Feature Store bypss Redux...
-
-### Quick Links
-- 🤓 Learn more about MiniRx on the [Docs site](https://spierala.github.io/mini-rx-store/)
-- ⭐ [MiniRx on GitHub](https://github.com/spierala/mini-rx-store)
-- 🚀 See it in action on [StackBlitz](https://stackblitz.com/edit/mini-rx-store-demo)
-
-## MiniRx vs. ComponentStore vs. Akita: FIGHT!
-
-Let's shed some light on MiniRx by comparing it with two other popular state management libraries: @ngrx/component-store and @datorama/akita.
-
 *Disclaimer: I am the maintainer of MiniRx Store, I try to be fair, but I it can be difficult ;)
 To be clear: ComponentStore and Akita are great state management libraries. But there might be situations where MiniRx Store is just a better fit.*
+
+## What is MiniRx?
+MiniRx is a full-blown **Redux** Store powered by RxJS: It includes actions, reducers, meta reducers, memoized selectors and Redux DevTools support.
+
+The Redux pattern is great to manage state at large scale, but it forces us to write boilerplate code (actions, reducers, dispatch actions).
+
+For that reason, MiniRx **Feature Stores** offer a more simple form of state management: 
+we can **bypass Redux boilerplate** and update state straight away with `setState`.
+
+MiniRx scales nicely with your state management requirements:
+
+- Make hard things simple with the Redux `Store` API
+- Keep simple things simple with the `FeatureStore` API
+
+In most cases you can default to the `FeatureStore` API and fall back to the `Redux API` to implement the really complex features in your application.
+
+### Links
+- 🤓 Learn more about MiniRx on the [Docs site](https://mini-rx.io)
+- ⭐ [MiniRx on GitHub](https://github.com/spierala/mini-rx-store)
+- 🚀 See it in action in the [Angular Demo](https://angular-demo.mini-rx.io/)
+
+## MiniRx Feature Store
+
+MiniRx Feature Store offers simple yet powerful state management.
+
+### Key concepts
+- **Less Boilerplate**: With the `FeatureStore` API you can update state without writing actions and reducers
+- A Feature Store **manages feature state** directly
+- The state of a Feature Store **integrates into the global state object**
+
+### `FeatureStore` API
+The FeatureStore API is optimized to select and update a feature state directly with a minimum of boilerplate.
+
+-   `setState()` update the feature state
+-   `select()` select state from the feature state object as RxJS Observable
+-   `effect()` run side effects like API calls and update feature state
+-   `undo()` easily undo setState actions (requires UndoExtension)
+
+### How does the Feature Store work?
+Feature Stores make use of Redux too: 
+Behind the scenes a Feature Store is creating a feature reducer and a "setState" action. 
+MiniRx dispatches that action when calling `setState()` and the corresponding feature reducer will update the feature state accordingly.
+
+### Links
+- 🤓 [Feature Store docs](https://mini-rx.io/docs/fs-quick-start)
+- 🚀 [MiniRx Basic Tutorial](https://stackblitz.com/edit/mini-rx-store-basic-tutorial?file=index.ts): 
+See how the Redux API and Feature Store API both add to the global state object
+
+## MiniRx FeatureStore vs. ComponentStore vs. Akita: FIGHT!
+
+Let's shed some light on MiniRx Feature Store by comparing it with two other popular state management libraries: @ngrx/component-store and @datorama/akita.
 
 ## The candidates
 
@@ -32,7 +73,9 @@ Mhhh..., this sounds all very similar, but where are the differences then:
 
 ### 0.) Setup
 
-Common ingredients for MiniRx Feature Store, Component Store and Akita:
+What does the basic setup of a reactive "State Service" look like?
+
+All setups share the same ingredients: A state interface and initial state.
 ```
 interface CounterState {
     count: number;
@@ -42,8 +85,6 @@ const initialState: CounterState = {
     count: 42
 }
 ```
-
-All setups below will use the same state interface and initial state.
 
 #### MiniRx Feature Store
 ```
@@ -65,7 +106,8 @@ export class CounterStateService extends FeatureStore<CounterState> {
     }
 }
 ```
-MiniRx Feature Store has to provide a "feature key" (see `super('counter', initialState)`). This is because the state is registered in the global state object.
+MiniRx Feature Store has to provide a "feature key" (see `super('counter', initialState)`). 
+The key is used to register the "counter" state in the global state object.
 
 #### Component Store
 ```
@@ -88,7 +130,8 @@ export class CounterStateService extends ComponentStore<CounterState> {
 }
 ```
 
-The Component Store setup looks very similar, however the "feature key" is not provided because a Component Store is local and lives independently.
+The Component Store setup looks very similar, however the "feature key" is not provided 
+because every `ComponentStore` instance lives independently.
 
 #### Akita
 ```
@@ -216,4 +259,6 @@ Akita is also framework-agnostic. You can see in this article how Svelte and Aki
 
 
 
-// TODO major versions
+// TODO major versions?
+// Get rid of FIGHT stuff, maybe a softer metaphor
+// 
