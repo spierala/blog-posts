@@ -32,7 +32,7 @@ In most cases you can default to the `FeatureStore` API and fall back to the `Re
 - 🚀 [MiniRx Basic Tutorial on StackBlitz](https://stackblitz.com/edit/mini-rx-store-basic-tutorial?file=index.ts):
   See how the Redux API and Feature Store API both add to the global state object
 
-## MiniRx FeatureStore vs. ComponentStore vs. Akita: FIGHT!
+## MiniRx FeatureStore vs. ComponentStore vs. Akita
 
 Let's shed some light on MiniRx Feature Store by comparing it with two other popular state management libraries: @ngrx/component-store and @datorama/akita.
 
@@ -160,7 +160,7 @@ But to access the state you have to extend `Query` and provide the `Store` insta
 Also, the components need to talk to both the `Query` instance and the `Store` instance in order to read and write state.
 
 ### 2. Bundle Sizes
-Regarding the basic setup, let's also look the corresponding bundle sizes (using source-map-explorer). 
+Regarding the basic setup, let's look the corresponding bundle sizes (using source-map-explorer). 
 
 #### MiniRx Feature Store
 combined: 152.39 KB
@@ -189,7 +189,7 @@ combined: 171.45 KB
 You can review the different setups in this repo and run source-map-explorer yourself: https://github.com/spierala/mini-rx-comparison
 
 ### 3. Local or global state
-How do the different stores relate to local (component state) and global state? What is the store lifespan?
+How do the different store solutions relate to local (component state) and global state? What is the store lifespan?
 
 #### MiniRx Feature Store
 MiniRx at its heart is a Redux Store with one global state object ("Single source of truth"). 
@@ -219,7 +219,7 @@ Akita has a [PlugIn for Redux DevTools support](https://datorama.github.io/akita
 FYI: The separate Store states are merged into one big state object to make all state inspectable with the Redux DevTools. See the Akita DevTools source [here](https://github.com/datorama/akita/blob/master/libs/akita/src/lib/devtools.ts).
 
 ### 5. Cross-state selection
-How easily can we select state from other store instances and pull that state into our current State Service?
+How can we select state from other store instances and pull that state into our current State Service?
 
 #### MiniRx Feature Store
 Every Feature Store state integrates into the global state object. Therefore, the corresponding feature states can be selected at anytime from the `Store`(!) instance using `store.select`.
@@ -234,9 +234,8 @@ Akita has `combineQueries` to combine state from different `Query` instances. `c
 See the Akita combineQueries source [here](https://github.com/datorama/akita/blob/master/libs/akita/src/lib/combineQueries.ts).
 
 ### 6. Memoized Selectors
-
 Memoized selectors can help to improve performance by reducing the number of computations of selected state. 
-The most common selectors API (`createSelector`) is great for Composition: Build selectors by combining existing selectors.
+The selectors API (`createSelector`) is also great for Composition: Build selectors by combining existing selectors.
 
 Examples for memoized selectors: 
 - [NgRx Store selectors](https://ngrx.io/guide/store/selectors)
@@ -325,4 +324,6 @@ Behind the scenes a Feature Store is creating a feature reducer and a "setState"
 MiniRx dispatches that action when calling `setState()` and the corresponding feature reducer will update the feature state accordingly.
 
 // TODO
-// Source code links (use specific tag)
+// Source code links (use specific git tag)
+// Closing words
+// Add to disclaimer: not every feature of Component Store / Akita is part of the comparison (maybe mention not covered features in Notes)
