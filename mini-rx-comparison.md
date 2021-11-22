@@ -1,8 +1,8 @@
-*TLDR* MiniRx "Feature Stores" offer simple yet powerful state management.
-How does MiniRx Feature Store compare to @ngrx/component-store and @datorama/akita? 10 rounds in the fighting ring will bring clarity!
+**MiniRx "Feature Stores"** offer **simple yet powerful state management**.
+How does **MiniRx Feature Store** compare to **@ngrx/component-store** and **@datorama/akita**? 10 rounds in the **fighting ring** will bring clarity!
 
-*Disclaimer: I am the maintainer of MiniRx Store, I try to be fair, but it can be difficult ;)
-To be clear: ComponentStore and Akita are great state management libraries. But there might be situations where MiniRx Store is just a better fit.*
+*Disclaimer: I am the maintainer of MiniRx Store, I try to be fair, but it can be difficult from time to time.
+To be clear: ComponentStore and Akita are great state management libraries. It will be an intense but also fun fight! I will make sure that nobody gets hurt!*
 
 ## What is MiniRx?
 MiniRx is a full-blown **Redux** Store powered by RxJS: It includes actions, reducers, meta reducers, memoized selectors, effects and Redux DevTools support.
@@ -237,6 +237,8 @@ Like this it is straight-forward to depend on (observable) state of other Compon
 Akita has `combineQueries` to combine state from different `Query` instances. `combineQueries` is basically RxJS `combineLatest`. 
 See the Akita combineQueries source [here](https://github.com/datorama/akita/blob/master/libs/akita/src/lib/combineQueries.ts).
 
+![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/6asoiza0ckl0o62s35wc.jpeg)
+
 ### 6. Memoized Selectors
 Memoized selectors can help to improve performance by reducing the number of computations of selected state. 
 The selectors API (`createSelector`) is also great for Composition: Build selectors by combining existing selectors.
@@ -321,6 +323,8 @@ Component Store is tied to Angular. Angular is a peer dependency in the [package
 #### Akita
 Akita is also framework-agnostic. You can see in this article how Svelte and Akita play together: [Supercharge Your Svelte State Management with Akita](https://netbasal.com/supercharge-your-svelte-state-management-with-akita-f1f9de5ef43d)
 
+![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/sg9baesmy5dexk6jh39m.jpeg)
+
 ## Notes
 ### How does the Feature Store work actually?
 Feature Stores uses Redux under the hood:
@@ -341,9 +345,14 @@ I hope that you had fun to watch this fight! We know all three competitors much 
 All of them showed their skills, none of them went to the ground!
 And we saw, little fighters like MiniRx should never be underestimated :)
 
-Thanks
+## Thanks
 Special thanks for reviewing this blog post:
 - Michael Rutzer?
 
 Articles which inspired me:
 - There was once a legendary fight in 2018, organized by [Orjan de Smet](https://twitter.com/orjandesmet): [NGRX VS. NGXS VS. AKITA VS. RXJS: FIGHT!](https://ordina-jworks.github.io/angular/2018/10/08/angular-state-management-comparison.html?utm_source=dormosheio&utm_campaign=dormosheio)
+
+Photos:
+- Photo "Attentie Attentie by <a href="https://unsplash.com/@attentieattentie?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Attentie Attentie</a> on <a href="https://unsplash.com/s/photos/boxing-ring?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+- Photo "Boxer" by <a href="https://unsplash.com/@single_lens_reflex?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Dan Burton</a> on <a href="https://unsplash.com/s/photos/boxer-break?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+- Photo "Boxing Gloves" by <a href="https://unsplash.com/@matthewapayne?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Matthew Payne</a> on <a href="https://unsplash.com/s/photos/boxing-gloves?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
