@@ -9,11 +9,11 @@ MiniRx is a full-blown **Redux** Store powered by **RxJS**: It includes actions,
 
 The Redux pattern is great to manage state at large scale, but it forces us to write boilerplate code (actions, reducers, dispatch actions). This can be overkill for simple features in your application.
 
-For that reason, MiniRx **Feature Stores** offer a more simple form of state management: we can **bypass Redux boilerplate** and interact **directly** with a corresponding **feature state** with the `FeatureStore` API:
+For that reason, MiniRx **Feature Store** offers a more simple form of state management: we can **bypass Redux boilerplate** and interact **directly** with a corresponding **feature state** with the `FeatureStore` API:
 - `setState()` update the feature state
 - `select()` select state from the feature state object as RxJS Observable
 - `effect()` run side effects like API calls and update feature state
-- `undo()` easily undo setState actions (requires UndoExtension)
+- `undo()` easily undo setState actions (requires the UndoExtension)
 - `get state()` imperatively get the current feature state
 
 MiniRx scales nicely with your state management requirements:
@@ -21,8 +21,16 @@ MiniRx scales nicely with your state management requirements:
 - Make hard things simple with the Redux `Store` API
 - Keep simple things simple with the `FeatureStore` API
 
-In most cases you can default to the `FeatureStore` API and fall back to the `Redux API` to implement the really complex features in your application.
+In most cases you can default to the `FeatureStore` API and fall back to the Redux `Store` API to implement the really complex features in your application.
 
+#### How does the Feature Store work?
+Feature Store uses Redux under the hood:
+Behind the scenes a Feature Store is creating a "feature reducer" and a corresponding "setState" action.
+MiniRx dispatches that action when calling `setState()` and the feature reducer will update the feature state accordingly.
+
+![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/2wgzrqjoz5ikedd3by3h.png)
+
+See the `FeatureStore` source [here](https://github.com/spierala/mini-rx-store/blob/3.0.0/projects/mini-rx-store/src/lib/feature-store.ts).
 #### Links
 - 🤓 Learn more about MiniRx on the [docs site](https://mini-rx.io)
 - ⭐ [MiniRx on GitHub](https://github.com/spierala/mini-rx-store)
@@ -33,26 +41,26 @@ In most cases you can default to the `FeatureStore` API and fall back to the `Re
 
 ## MiniRx FeatureStore vs. ComponentStore vs. Akita
 
-Let's shed some light on MiniRx Feature Store by sending it to the fighting ring together with two other popular state management libraries: @ngrx/component-store and @datorama/akita.
+Let's shed some light on **MiniRx Feature Store** by sending it to the fighting ring together with two other popular state management libraries: **@ngrx/component-store** and **@datorama/akita**.
 
 ## The competitors
 
 #### Component Store
 ComponentStore is a library that helps to manage local/component state. It can be used as an alternative to the "Service with a Subject" approach. 
-It is build on top of RxJS/ReplaySubject (see [here](https://github.com/ngrx/platform/blob/13.0.1/modules/component-store/src/component-store.ts#L52)). Services which extend ComponentStore expose state as RxJS Observables (using the `select` method). With the methods `setState` and `patchState` the state can be updated.
+It is build on top of RxJS/ReplaySubject (see [here](https://github.com/ngrx/platform/blob/13.0.1/modules/component-store/src/component-store.ts#L52)). Services which extend `ComponentStore` expose state as RxJS Observables (using the `select` method). With the methods `setState` and `patchState` the state can be updated.
 
 Docs: https://ngrx.io/guide/component-store
 
 #### Akita
 Akita describes itself as a "state management pattern": 
-It offers a set of specialized classes like: `Store`, `Query`, `EntityStore` and more. 
+It offers a set of specialized classes like `Store`, `Query`, `EntityStore` and more. 
 Akita `Store` is build on top of RxJS/BehaviorSubject (see [here](https://github.com/datorama/akita/blob/v6.2.0/libs/akita/src/lib/store.ts#L49)). 
 By using the Akita classes we can build a reactive state service which exposes state as RxJS Observables (using `select` on a `Query` instance). The `update` method of `Store` is used to update the state.
 
 Docs: https://datorama.github.io/akita/
 
 #### MiniRx Feature Store
-MiniRx is a "hybrid" Store. It uses Redux and RxJS/BehaviorSubject (see [here](https://github.com/spierala/mini-rx-store/blob/3.0.0/projects/mini-rx-store/src/lib/store-core.ts#L30)) under the hood and exposes the powerful Redux `Store` API (which is very similar to [@ngrx/store](https://ngrx.io/guide/store) and [@ngrx/effects](https://ngrx.io/guide/effects)). 
+MiniRx itself is a "hybrid" Store. It uses Redux and RxJS/BehaviorSubject (see [here](https://github.com/spierala/mini-rx-store/blob/3.0.0/projects/mini-rx-store/src/lib/store-core.ts#L30)) under the hood and exposes the powerful Redux `Store` API (which is very similar to [@ngrx/store](https://ngrx.io/guide/store) and [@ngrx/effects](https://ngrx.io/guide/effects)). 
 At the same time MiniRx allows you to bypass the infamous Redux boilerplate with the `FeatureStore` API. 
 You can create a reactive state service by extending `FeatureStore`. 
 RxJS Observables (returned by the `select` method) inform about state changes and the state can be changed by calling `setState`.
@@ -64,11 +72,13 @@ Mhhh..., this sounds all very similar, but where are the differences then? It's 
 ## FIGHT!
 10 rounds to go! 
 
-### 1. Setup
+### 1. Basic Setup
 
 What does the basic setup of a **reactive state service** look like?
 
-All setups share the same ingredients: A state interface and initial state.
+All setups share the same ingredients: A state interface and initial state. 
+
+FYI: The state interface must be object-like: you can not state-manage just a plain `number` or `string`. 
 ```typescript
 interface CounterState {
     count: number;
@@ -80,6 +90,7 @@ const initialState: CounterState = {
 ```
 
 #### MiniRx Feature Store
+The state service extends `FeatureStore`:
 ```typescript
 @Injectable({providedIn: 'root'})
 export class CounterStateService extends FeatureStore<CounterState> {
@@ -99,10 +110,11 @@ export class CounterStateService extends FeatureStore<CounterState> {
     }
 }
 ```
-MiniRx Feature Store has to provide a _feature key_: "counter". 
+MiniRx Feature Store has to provide the initial state and a _feature key_: "counter". 
 The key is used to register the "counter" state in the global state object.
 
 #### Component Store
+With Component Store we extend `ComponentStore` and provide an initial state:
 ```typescript
 @Injectable({providedIn: 'root'})
 export class CounterStateService extends ComponentStore<CounterState> {
@@ -122,9 +134,11 @@ export class CounterStateService extends ComponentStore<CounterState> {
     }
 }
 ```
-The Component Store setup looks very similar, however the feature key is not provided because every `ComponentStore` instance lives independently.
+The Component Store setup looks very similar to Feature Store, however the feature key is not needed because every `ComponentStore` instance lives independently.
+FYI: The Component Store initial state parameter is optional (see docs [here](https://ngrx.io/guide/component-store/initialization#lazy-initialization)).
 
 #### Akita
+With Akita, we create two services: One extends `Store` and the other one extends `Query`:
 ```typescript
 @Injectable({providedIn: 'root'})
 @StoreConfig({ name: 'counter' })
@@ -215,15 +229,15 @@ Akita has a [PlugIn for Redux DevTools support](https://datorama.github.io/akita
 FYI: The separate Store states are merged into one big state object to make all state inspectable with the Redux DevTools. See the Akita DevTools source [here](https://github.com/datorama/akita/blob/master/libs/akita/src/lib/devtools.ts).
 
 ### 5. Cross-state selection
-How can we select state from other store instances and pull that state into our current state service?
+How can we select state from other store instances and pull that state into our current store (state service)?
 
 #### MiniRx Feature Store
-Every Feature Store state integrates into the global state object. Therefore, the corresponding feature states can be selected at anytime from the `Store`(!) instance using `store.select`.
+Every Feature Store state integrates into the global state object. Therefore, the corresponding feature states can be selected at anytime from the Redux `Store`(!) instance using `store.select`.
 Alternatively you can use RxJS combination operators like `combineLatest` or `withLatestFrom` to combine state from other Feature Stores with state Observables of your current Feature Store.
 
 #### Component Store
 The Component Store `select` method also accepts a bunch of Observables to depend on (see docs [here](https://ngrx.io/guide/component-store/read#combining-selectors)). 
-Like this it is straight-forward to depend on (observable) state of other `ComponentStore` instances.
+Of course these Observables can come from other services. Like this it is straight-forward to depend on (observable) state of other `ComponentStore` instances.
 
 #### Akita
 Akita has `combineQueries` to combine state from different `Query` instances. `combineQueries` is basically RxJS `combineLatest`. 
@@ -245,21 +259,21 @@ You can use the same `createFeatureSelector` and `createSelector` functions for 
 
 Read more in the [Feature Store memoized selectors documentation](https://mini-rx.io/docs/select-feature-state#memoized-selectors).
 
-Example code from the Angular Demo: [Todos State Service](https://github.com/spierala/mini-rx-angular-demo/blob/main/src/app/modules/todo/state/todos-state.service.ts#L29)
+Example code of memoized selectors in the MiniRx Angular Demo: [Todos State Service](https://github.com/spierala/mini-rx-angular-demo/blob/main/src/app/modules/todo/state/todos-state.service.ts#L29)
 
 #### Component Store
 There is no official solution for Component Store. 
-You could add @ngrx/store to use the memoized selectors, but it would probably be overkill to add the NgRx Redux Store just to use the selectors.
+You could add @ngrx/store to use the memoized selectors, but it would probably be overkill to add the NgRx Redux Store just for that reason. Redux Reselect could be a better alternative.
 
 #### Akita
-No memoized selectors.
+No memoized selectors. You could most probably add Redux Reselect.
 
 ### 7. Effects
 Effects are used to trigger side effects like API calls. 
 We can also handle race-conditions more easily within an Effect by using RxJS flattening operators (`switchMap`, `mergeMap`, etc.).
 
 #### MiniRx Feature Store
-MiniRx `FeatureStore` has Effects (https://mini-rx.io/docs/effects-for-feature-store).
+MiniRx Feature Store has Effects (https://mini-rx.io/docs/effects-for-feature-store).
 
 FYI: Feature Store Effects have their equivalent in the Redux API of MiniRx: https://mini-rx.io/docs/effects
 
@@ -286,7 +300,7 @@ No support for undo.
 
 #### Akita
 Akita has a State History PlugIn to undo state changes (https://datorama.github.io/akita/docs/plugins/state-history/). 
-The API is much bigger than the one of MiniRx. But it seems to be difficult to undo a very specific state change (which is important when undoing optimistic updates).
+The API is much bigger than the one of Feature Store. But it seems to be difficult to undo a very specific state change (which is important when undoing optimistic updates).
 
 ### 9. Immutable State
 Immutability is key when using state management: We only want to allow explicit state changes using the corresponding API (e.g. by using `setState`, `update` or by dispatching an Action in Redux). 
@@ -299,10 +313,10 @@ When the `ImmutableStateExtension` is added to the MiniRx Store both the Redux `
 The Immutable State Extension "deepfreezes" the global state when state is updated. Mutating state will throw an exception.
 
 #### Component Store
-There is nothing in ComponentStore which can enforce immutability.
+There is nothing in Component Store which can enforce immutability.
 
 #### Akita
-Akita "deepfreezes" the state object when state is updated (only in DEV mode) See the corresponding source code here: https://github.com/datorama/akita/blob/v6.2.0/libs/akita/src/lib/store.ts#L181
+Akita "deepfreezes" the state object when state is updated (only in DEV mode). See the corresponding source code here: https://github.com/datorama/akita/blob/v6.2.0/libs/akita/src/lib/store.ts#L181
 
 ### 10. Framework-agnostic
 #### MiniRx Feature Store
@@ -318,36 +332,41 @@ Akita is also framework-agnostic. You can see in this article how Svelte and Aki
 
 ![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/sg9baesmy5dexk6jh39m.jpeg)
 
-## Notes
-### How does the Feature Store work actually?
-Feature Store uses Redux under the hood:
-Behind the scenes a Feature Store is creating a feature reducer and a "setState" action.
-MiniRx dispatches that action when calling `setState()` and the corresponding feature reducer will update the feature state accordingly.
-
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/2wgzrqjoz5ikedd3by3h.png)
-
-See the `FeatureStore` source [here](https://github.com/spierala/mini-rx-store/blob/3.0.0/projects/mini-rx-store/src/lib/feature-store.ts).
-
-### What did we not cover?
-10 rounds are enough, right? We covered the aspects of state management which are - in my opinion - the most important. MiniRx focuses on the important things.
-Nonetheless, I want to list a few things that were out of scope for this fight: 
-
-- Akita: EntityStore, Transactions, Akita Immer, Persist State, CLI. 
-- Component Store: `updater` method, `tapResponse` operator
+Yes, you made it! I hope that you had fun to watch this fight!
 
 ## Conclusion
-I hope that you had fun to watch this fight! We know all three competitors much better now. 
-All of them showed their skills, none of them went to the ground!
-And we saw, little fighters like MiniRx should never be underestimated :)
+All competitors showed their skills, none of them went to the ground!
+
+Who was your favorite?
+
+Give it a star on GitHub: 
+
+- ⭐ [MiniRx on GitHub](https://github.com/spierala/mini-rx-store)
+- ⭐ [NgRx on GitHub](https://github.com/ngrx/platform)
+- ⭐ [Akita on GitHub](https://github.com/datorama/akita)
+
+## Notes
+
+### What did we not cover?
+For completeness, I want to list a few things that were out of scope for this fight: 
+
+- Akita: EntityStore, Transactions, Akita Immer, Persist State, CLI
+- Component Store: `updater` method, `tapResponse` operator
+
+#### @rx-angular/state
+Another cool lib which goes into the same direction as NgRx Component Store:
+https://github.com/rx-angular/rx-angular/blob/master/libs/state/README.md
+
+Maybe see you in the next fight! :)
 
 ## Thanks
-Special thanks for reviewing this blog post:
-- Michael Rutzer?
+#### Special thanks for reviewing this blog post:
+- [Michael Rutzer - diePartments](https://twitter.com/diePartments)
 
-Articles which inspired me:
+#### Articles which inspired me:
 - There was once a legendary fight in 2018, organized by [Orjan de Smet](https://twitter.com/orjandesmet): [NGRX VS. NGXS VS. AKITA VS. RXJS: FIGHT!](https://ordina-jworks.github.io/angular/2018/10/08/angular-state-management-comparison.html?utm_source=dormosheio&utm_campaign=dormosheio)
 
-Photos:
+#### Photos:
 - Photo by <a href="https://unsplash.com/@attentieattentie?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Attentie Attentie</a> on <a href="https://unsplash.com/s/photos/boxing-ring?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 - Photo by <a href="https://unsplash.com/@single_lens_reflex?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Dan Burton</a> on <a href="https://unsplash.com/s/photos/boxer-break?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 - Photo by <a href="https://unsplash.com/@matthewapayne?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Matthew Payne</a> on <a href="https://unsplash.com/s/photos/boxing-gloves?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
