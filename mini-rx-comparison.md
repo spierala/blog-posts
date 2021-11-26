@@ -25,8 +25,9 @@ In most cases you can default to the `FeatureStore` API and fall back to the Red
 
 #### How does the Feature Store work?
 Feature Store uses Redux under the hood:
-Behind the scenes a Feature Store is creating a "feature reducer" and a corresponding "setState" action.
-MiniRx dispatches that action when calling `setState()` and the feature reducer will update the feature state accordingly.
+Behind the scenes a Feature Store is creating a _feature reducer_ and a corresponding _setState_ action.
+The _feature reducer_ is registered in the Redux Store and the Feature Store state becomes part of the global state object.
+The Feature Store dispatches its _setState_ action when calling `setState()` and the _feature reducer_ will update the feature state accordingly.
 
 ![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/2wgzrqjoz5ikedd3by3h.png)
 
