@@ -1,3 +1,7 @@
+---
+description: MiniRx Feature Store offers simple yet powerful state management in Angular. How does MiniRx Feature Store compare to NgRx ComponentStore and Akita?
+---
+
 **MiniRx "Feature Stores"** offer **simple yet powerful state management**.
 How does **MiniRx Feature Store** compare to **@ngrx/component-store** and **@datorama/akita**? 10 rounds in the **fighting ring** will bring clarity!
 
