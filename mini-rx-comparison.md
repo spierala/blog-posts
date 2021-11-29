@@ -41,7 +41,7 @@ See the `FeatureStore` source [here](https://github.com/spierala/mini-rx-store/b
 - 🚀 [MiniRx Basic Tutorial on StackBlitz](https://stackblitz.com/edit/mini-rx-store-basic-tutorial?file=index.ts):
   See how the Redux API and Feature Store API both add to the global state object
 
-## MiniRx FeatureStore vs. ComponentStore vs. Akita
+## MiniRx FeatureStore vs. NgRx ComponentStore vs. Akita
 
 Let's shed some light on **MiniRx Feature Store** by sending it to the fighting ring together with two other popular state management libraries: **@ngrx/component-store** and **@datorama/akita**.
 
