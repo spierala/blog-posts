@@ -1,12 +1,12 @@
 ---
-description: MiniRx Feature Store offers simple yet powerful state management in Angular. How does MiniRx Feature Store compare to NgRx ComponentStore and Akita?
+description: MiniRx Feature Store offers simple yet powerful state management in Angular. How does MiniRx Feature Store compare to NgRx Component Store and Akita?
 ---
 
 **MiniRx "Feature Stores"** offer **simple yet powerful state management**.
 How does **MiniRx Feature Store** compare to **@ngrx/component-store** and **@datorama/akita**? 10 rounds in the **fighting ring** will bring clarity!
 
 *Disclaimer: I am the maintainer of MiniRx Store, I try to be fair, but it can be difficult from time to time.
-To be clear: ComponentStore and Akita are great state management libraries. It will be an intense fight, but I will make sure that nobody gets hurt!*
+To be clear: Component Store and Akita are great state management libraries. It will be an intense fight, but I will make sure that nobody gets hurt!*
 
 ## What is MiniRx?
 MiniRx is a full-blown **Redux** Store powered by **RxJS**: It includes actions, reducers, meta reducers, memoized selectors, effects and Redux DevTools support.
@@ -45,14 +45,14 @@ See the `FeatureStore` source [here](https://github.com/spierala/mini-rx-store/b
 - 🚀 [MiniRx Basic Tutorial on StackBlitz](https://stackblitz.com/edit/mini-rx-store-basic-tutorial?file=index.ts):
   See how the Redux API and Feature Store API both add to the global state object
 
-## MiniRx FeatureStore vs. NgRx ComponentStore vs. Akita
+## MiniRx Feature Store vs. NgRx Component Store vs. Akita
 
 Let's shed some light on **MiniRx Feature Store** by sending it to the fighting ring together with two other popular state management libraries: **@ngrx/component-store** and **@datorama/akita**.
 
 ## The competitors
 
 #### NgRx Component Store (13.0.1)
-ComponentStore is a library that helps to manage local/component state. It can be used as an alternative to the "Service with a Subject" approach. 
+Component Store is a library that helps to manage local/component state. It can be used as an alternative to the "Service with a Subject" approach. 
 It is build on top of RxJS/ReplaySubject (see [here](https://github.com/ngrx/platform/blob/13.0.1/modules/component-store/src/component-store.ts#L52)). Services which extend `ComponentStore` expose state as RxJS Observables (using the `select` method). With the methods `setState` and `patchState` the state can be updated.
 
 Docs: https://ngrx.io/guide/component-store
