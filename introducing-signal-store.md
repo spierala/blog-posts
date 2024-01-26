@@ -8,16 +8,24 @@ Welcome to MiniRx Signal Store, the new state management library from MiniRx.
     * Manage **global** state at large scale with the **Store (Redux) API**
     * Manage **global** state with a minimum of boilerplate using **Feature Stores**
     * Manage **local** component state with **Component Stores**
+    * All combined in a single library
     * MiniRx always tries to find the sweet spot between powerful, simple and [lightweight](https://github.com/spierala/angular-state-management-comparison)
 * Signal Store implements and promotes new **Angular best practices**:
     * **Signals** are used for **(synchronous) state**
     * **RxJS** is used for events and **asynchronous tasks**
 * Signal Store helps to streamline your usage of [RxJS](https://rxjs.dev/) and [Signals](https://angular.io/guide/signals): e.g. `connect` and `rxEffect` understand both Signals and Observables
-* Simple refactor: If you used MiniRx Store before, refactor to Signal Store will be pretty straight-forward: change the TypeScript imports, remove the Angular async pipes (and ugly non-null assertions (`!`)) from the template
 * Signal Store has first-class support for OOP style (e.g. `MyStore extends FeatureStore`), but offers also functional creation methods (e.g. `createFeatureStore`)
+* Simple refactor: If you used MiniRx Store before, refactor to Signal Store will be pretty straight-forward: change the TypeScript imports, remove the Angular async pipes (and ugly non-null assertions (`!`)) from the template
 
-#### Use-cases
+### Getting Started
+To install the @mini-rx/signal-store package, use your package manager of choice:
+
+`npm install @mini-rx/signal-store`
+
+### Use-cases
+
 MiniRx Signal Store is highly flexible and offers three different well-defined state containers out of the box:
+ 
 - Store (Redux)
 - FeatureStore
 - ComponentStore
@@ -29,16 +37,17 @@ These are the typical use-cases:
 
 ![use-cases.png](assets%2Fuse-cases.png)
 
-## MiniRx Signal Store APIs
+## Store (Redux)
 Let's start with Redux... If you do not like Redux, do not run away! MiniRx Signal Store has first-class support for bypassing the infamous Redux boilerplate: Feature Stores.
 
-### Redux introduction
+### Redux Pattern
 
-The Redux pattern is great to manage state at large scale and MiniRx Signal Store offers a powerful Redux API.
+The Redux pattern is great to manage state at large scale. MiniRx Signal Store offers a powerful Redux API.
 
-Let's have a look at the basic building blocks of Redux:
+#### The Redux ingredients
+Let's have a look at the basic building blocks of the Redux pattern:
 
-- Actions: describe events with an optional payload
+- Actions: objects which describe events with an optional payload
 - Reducers: 
   - pure functions which know how to update state (based on the current state and a given action)
   - reducers are run for every action in order to calculate the next state
@@ -51,17 +60,17 @@ Every part does its own specialized thing, you can also split up your code more 
 
 ![redux-file-structure.png](assets%2Fredux-file-structure.png)
 
-More benefits of Redux:
-- Single source of truth for your state (state resides in **one** global state object)
+#### More benefits of Redux
+- Single source of truth for your state (one global state object)
 - Uni-directional data flow
 - Indirection of State and Actions
   - State: state is updated via actions, state changes are propagated via new Signal values
-  - Actions: A single action can update state in one or many reducers, and trigger async tasks in effects
+  - Actions: A single action can update state in one or many reducers. The same action can trigger async tasks in effects.
 - Tooling: Redux DevTools
 
-### Implementation
+### Redux Store Implementation
 
-The Signal Store makes use of both Signals and Observables. Let's see how the Redux Store is implemented...
+The MiniRx Signal Store makes use of both Signals and Observables. Let's see how the Redux Store is implemented...
 
 #### 🚦 Signals
 
@@ -71,16 +80,18 @@ The Signal Store makes use of both Signals and Observables. Let's see how the Re
 
 #### Observables
 
-- Actions are implemented as RxJS Subject, because Subjects are great for events!
+- A RxJS Subject is the basis for the Actions stream, because Subjects are great for events!
 - In Effects the Observable Actions stream is used to trigger side effects like API calls. You can easily handle race-conditions with RxJS flattening operators.
 
 ### Redux API
 
-This is a just quick overview of the Signal Store Redux API. We mostly look at code examples to get a feeling for the Redux API...
+Let's have a look at some code examples to get known to the Signal Store Redux API...
 
 #### Memoized selectors
 
 Memoized selectors are used to select state from the global state object.
+You can compose selectors from other selectors, which makes code reuse easy.
+Last but not least, memoized selectors can be good for performance, if you have to perform more complex computations for selecting state.
 
 ```ts
 import {
@@ -101,6 +112,14 @@ export const getProducts = createSelector(
   getProductsFeature,
   (state) => state.list,
 );
+```
+
+Usage of the selectors e.g. in a component:
+```ts
+export class ProductShellComponent implements OnInit {
+    private store = inject(Store);
+    products: Signal<Product[]> = this.store.select(getProducts);
+}
 ```
 
 #### Actions
@@ -159,7 +178,7 @@ _FYI_ the powerful [ts-action](https://www.npmjs.com/package/ts-action) library 
 
 You create an effect like this: 
 - Listen to a specific action
-- Run a (in most cases) asynchronous task
+- Run an (in most cases) asynchronous task
 - Return a new action, when the task succeeded/failed
 
 ```ts
@@ -199,7 +218,7 @@ export class ProductEffects {
 }
 ```
 
-#### Register reducers
+#### Register reducers and effects
 
 You can register reducers and effects with modern Angular standalone APIs (`provideStore`, `provideEffects`) when initializing the app:
 ```ts
@@ -230,9 +249,9 @@ export const appConfig: ApplicationConfig = {
 };
 ```
 
-#### Lazy load reducers
+#### Register reducers and effects via a lazy loaded component
 
-It is possible to register reducers together with a lazy loaded module (see `provideFeature`).
+It is possible to register reducers together with a lazy loaded component (see `provideFeature`).
 For registering effects you can use `provideEffects`.
 
 ```ts
@@ -260,7 +279,9 @@ export const productRoutes: Routes = [
 
 #### Component usage
 
-Your components can read state from the store via the `select` method. `select` returns an Angular Signal.
+Your components can read state from the store via the `select` method. 
+
+🚦 `select` returns an Angular Signal.
 
 The `dispatch` method is used to notify the store about new Events (Actions).
 ```ts
@@ -301,7 +322,10 @@ Of course, MinRx Signal Store supports Redux DevTools. With Redux DevTools you c
 
 And there is more which we haven't covered: 
 - Meta reducers
-- We can register extensions: Redux DevTools, Immutable Extension, Undo Extension, Logger Extension
+- We can register extensions: 
+  - Immutable State Extension (enforce state immutability)
+  - Undo Extension (Undo state changes)
+  - Logger Extension (Log actions and updated state in the JS console)
 - You can write your own extensions
 
 ## Feature Store
@@ -632,3 +656,9 @@ export class ConnectDemoComponent {
   }
 }
 ```
+
+### TODO
+Thanks to
+
+contributors
+reviewers of the blogpost
