@@ -635,22 +635,23 @@ With `connect` you can connect your store with external sources like Observables
 This helps to make your store the Single Source of Truth for your state.
 
 ```ts
-import { Component, signal } from '@angular/core';
-import { ComponentStore, createComponentStore } from '@mini-rx/signal-store';
+import { Component, Signal, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { createComponentStore } from '@mini-rx/signal-store';
 import { timer } from 'rxjs';
-
-interface State {
-  counterFromObservable: number;
-  counterFromSignal: number;
-}
 
 @Component({
 // ...
 })
-export class ConnectDemoComponent {
-  cs: ComponentStore<State> = createComponentStore<State>({
-    counterFromObservable: 0,
-    counterFromSignal: 0,
+export class ConnectComponent {
+  store = createComponentStore({
+    counter: 0,
+    counterFromObservable: 0, // Will be updated via Observable
+    counterFromSignal: 0, // Will be updated via Signal
+  });
+
+  sum: Signal<number> = this.store.select((state) => {
+    return state.counter + state.counterFromObservable + state.counterFromSignal;
   });
 
   constructor() {
@@ -660,12 +661,16 @@ export class ConnectDemoComponent {
     const signalCounter = signal(0); // Signal
 
     // Connect external sources (Observables or Signals) to the Component Store
-    this.cs.connect({
+    this.store.connect({
       counterFromObservable: observableCounter$, // Observable
       counterFromSignal: signalCounter, // Signal
     });
 
     setInterval(() => signalCounter.update((v) => v + 1), interval);
+  }
+
+  increment() {
+    this.store.setState((state) => ({ counter: state.counter + 1 }));
   }
 }
 ```
@@ -674,8 +679,8 @@ export class ConnectDemoComponent {
 
 NOT!
 
-You can use MiniRx Signal Store version 1 in production! 
-It has tons of Unit Tests and there are several demos (see below).
+You can use MiniRx Signal Store v1 in production! 
+It has tons of unit tests and there are several demos (see below).
 
 As in every software there can be bugs. We will fix them.
 BREAKING CHANGES come with a new major version.
@@ -688,12 +693,22 @@ MiniRx was successfully tested in these projects:
 - [Angular Jira Clone](https://github.com/trungvose/jira-clone-angular/pull/99)
 - [MiniRx Signal Store Demo](https://signal-store-demo.mini-rx.io/)
 
+## The future of the original MiniRx Store
+
+The original RxJS-based and framework-agnostic [MiniRx Store](https://www.npmjs.com/package/mini-rx-store) will be further maintained.
+MiniRx Store and MiniRx Signal Store are going to share a large portion of their code (via the @mini-rx/common library).
+Signal Store uses the common library already. The refactor of MiniRx Store will start soon.
+
+MiniRx store will benefit from innovations in the Signal Store and vice versa: e.g. the `connect` method will be released for MiniRx Store as well in the near future.
+
+The goal is to keep the feature set of MiniRx Store and Signal Store pretty much in sync.
+However, Signal Store will always have a deeper Angular integration.
 
 ###########################
 # TODO
 ###########################
-- Write more about `connect`, show Redux DevTools with connected state
-- Some closing words
+- Add link to the repo show-casing all code examples
+- Some closing words / summary
 - Thanks to
   - contributors
   - reviewers of the blogpost
