@@ -1,21 +1,28 @@
-## Introducing MiniRx Signal Store
+Welcome to **MiniRx Signal Store**, the new state management library from [MiniRx](https://mini-rx.io/).
 
-Welcome to MiniRx Signal Store, the new state management library from MiniRx.
+With the arrival of [Signals](https://angular.io/guide/signals) in Angular 16, new best practices are arising for state and events. In the future Signals and Observables will coexist in your application.
+
+Modern Angular needs modern state management which promotes **new Angular best practices** and **streamlines the usage of Signals and Observables**...
+
+MiniRx Signal Store is exactly that.
+
+### Modern state management with MiniRx Signal Store:
 
 * Signal Store is an **[Angular](https://angular.dev/)-only** state management library
 * Signal Store **embraces [Angular Signals](https://angular.io/guide/signals)** and leverages **Modern Angular APIs** internally
 * Signal Store is based on the same great concept as the original **[MiniRx Store](https://mini-rx.io/)**
-    * Manage **global** state at large scale with the **Store (Redux) API**
-    * Manage **global** state with a minimum of boilerplate using **Feature Stores**
-    * Manage **local** component state with **Component Stores**
-    * All combined in a single library
-    * MiniRx always tries to find the sweet spot between powerful, simple and [lightweight](https://github.com/spierala/angular-state-management-comparison)
+  * Manage **global** state at large scale with the **Store (Redux) API**
+  * Manage **global** state with a minimum of boilerplate using **Feature Stores**
+  * Manage **local** component state with **Component Stores**
+  * All combined in a single library
+  * MiniRx always tries to find the sweet spot between powerful, simple and [lightweight](https://github.com/spierala/angular-state-management-comparison)
 * Signal Store implements and promotes new **Angular best practices**:
-    * **Signals** are used for **(synchronous) state**
-    * **RxJS** is used for events and **asynchronous tasks**
+  * **Signals** are used for **(synchronous) state**
+  * **RxJS** is used for events and **asynchronous tasks**
+* Immutable Signal State: Immutability can be enforced with the Immutable State extension
 * Signal Store helps to streamline your usage of [RxJS](https://rxjs.dev/) and [Signals](https://angular.io/guide/signals): e.g. `connect` and `rxEffect` understand both Signals and Observables
 * Signal Store has first-class support for OOP style (e.g. `MyStore extends FeatureStore`), but offers also functional creation methods (e.g. `createFeatureStore`)
-* Simple refactor: If you used MiniRx Store before, refactor to Signal Store will be pretty straight-forward: change the TypeScript imports, remove the Angular async pipes (and ugly non-null assertions (`!`)) from the template
+* Simple refactor: If you used MiniRx Store before, refactor to Signal Store will be straight-forward: change the TypeScript imports, remove the Angular async pipes (and ugly non-null assertions (`!`)) from the template
 
 ### Getting Started
 To install the @mini-rx/signal-store package, use your package manager of choice:
@@ -25,17 +32,17 @@ To install the @mini-rx/signal-store package, use your package manager of choice
 ### Use-cases
 
 MiniRx Signal Store is highly flexible and offers three different well-defined state containers out of the box:
- 
-- Store (Redux)
-- FeatureStore
-- ComponentStore
 
-All three can be easily used together in your application. 
+- Store (Redux)
+- Feature Store
+- Component Store
+
+All three can be easily used together in your application.
 Depending on the use-case, you can choose the state container which suits your needs.
 
 These are the typical use-cases:
 
-![use-cases.png](assets%2Fuse-cases.png)
+![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/qj5anf3ibwrjw20yu6t0.png)
 
 ## Store (Redux)
 Let's start with Redux... If you do not like Redux, do not run away! MiniRx Signal Store has first-class support for bypassing the infamous Redux boilerplate: Feature Stores.
@@ -48,17 +55,20 @@ The Redux pattern is great to manage state at large scale. MiniRx Signal Store o
 Let's have a look at the basic building blocks of the Redux pattern:
 
 - Actions: objects which describe events with an optional payload
-- Reducers: 
+- Reducers
   - pure functions which know how to update state (based on the current state and a given action)
   - reducers are run for every action in order to calculate the next state
 - Effects: listen to a specific action, run side effects like API calls and handle race conditions (with RxJS flattening operators)
 - Memoized selectors: pure functions which describe how to select state from the global state object
-- Store: holds the global state object, wires everything up (reducers, effects), offers the public API (`dispatch`, `select`)
+- Store
+  - holds the global state object
+  - wires everything up (reducers, effects)
+  - exposes the public Store API (`dispatch`, `select`)
 
-You can see already, that these building blocks offer a nice separation of concerns. 
+You can see already, that these building blocks offer a nice separation of concerns.
 Every part does its own specialized thing, you can also split up your code more easily:
 
-![redux-file-structure.png](assets%2Fredux-file-structure.png)
+![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/ib6mnr0vmrq550muhys7.png)
 
 #### More benefits of Redux
 - Single source of truth for your state (one global state object)
@@ -74,14 +84,14 @@ The MiniRx Signal Store makes use of both Signals and Observables. Let's see how
 
 #### 🚦 Signals
 
-- The global state is implemented as Angular Signal, because Signals are great for state! 
+- The global state is implemented as Angular Signal, because Signals are great for state!
 - `Store.select` returns a Signal
-- Memoized selectors uses `computed` internally for memoization
+- Memoized selectors use Signal `computed` internally for memoization
 
 #### Observables
 
 - A RxJS Subject is the basis for the Actions stream, because Subjects are great for events!
-- In Effects the Observable Actions stream is used to trigger side effects like API calls. You can easily handle race-conditions with RxJS flattening operators.
+- In Effects the Observable Actions stream is used to trigger side effects like API calls. For that reason you can easily handle race-conditions with RxJS flattening operators (e.g. `switchMap`, `concatMap` etc.).
 
 ### Redux API
 
@@ -117,8 +127,8 @@ export const getProducts = createSelector(
 Usage of the selectors e.g. in a component:
 ```ts
 export class ProductShellComponent implements OnInit {
-    private store = inject(Store);
-    products: Signal<Product[]> = this.store.select(getProducts);
+  private store = inject(Store);
+  products: Signal<Product[]> = this.store.select(getProducts);
 }
 ```
 
@@ -279,11 +289,11 @@ export const productRoutes: Routes = [
 
 #### Component usage
 
-Your components can read state from the store via the `select` method. 
+Your components can read state from the store via the `select` method.
 
-🚦 `select` returns an Angular Signal.
+`select` returns an Angular Signal.
 
-The `dispatch` method is used to notify the store about new Events (Actions).
+The `dispatch` method is used to notify the store about new events (aka actions).
 ```ts
 import { Component, inject, OnInit, Signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -316,13 +326,13 @@ export class ProductShellComponent implements OnInit {
 
 Of course, MinRx Signal Store supports Redux DevTools. With Redux DevTools you can inspect the current state and see which actions have been dispatched.
 
-![devtools-redux-api.png](assets%2Fdevtools-redux-api.png)
+![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/bmnhd39ltnyzkvhdjkmq.png)
 
 #### What else
 
-And there is more which we haven't covered: 
+And there is more which we haven't covered:
 - Meta reducers
-- We can register extensions: 
+- We can register extensions:
   - Immutable State Extension (enforce state immutability)
   - Undo Extension (Undo state changes)
   - Logger Extension (Log actions and updated state in the JS console)
@@ -333,9 +343,9 @@ And there is more which we haven't covered:
 Feature Store offers a more simple API to manage state, but it still uses the Redux store under the hood.
 
 ### Implementation
-And again, MiniRx implements and promotes new Angular best practices also in the Feature Store:
-- State is implemented and exposed as Angular Signal
-- RxJS Subject is used for effects to run asynchronous tasks
+MiniRx implements and promotes new Angular best practices also in the Feature Store:
+- The state is implemented and exposed as Angular Signal
+- An RxJS Subject is used for effects to run asynchronous tasks
 
 ### What's included
 - `setState` update feature state directly with a minimum of boilerplate
@@ -345,7 +355,7 @@ And again, MiniRx implements and promotes new Angular best practices also in the
 - `connect` connect external sources like Signals or Observables to your feature state
 - `undo` undo state changes (requires the Undo extension)
 
-### Example using `extends`
+### Example using `extends FeatureStore`
 
 A typical Feature Store looks like this (a Singleton Angular service which extends `FeatureStore`):
 
@@ -406,7 +416,7 @@ Feature Stores use Redux under the hood and their state becomes part of the glob
 
 For that reason you can easily debug your Feature Stores with the Redux DevTools.
 
-![devtools-feature-store-api.png](assets%2Fdevtools-feature-store-api.png)
+![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/9h68e1b0uggyfd9fi2td.png)
 
 ### Advanced Feature Stores
 When your state becomes more complex, Feature Store will scale with your state management needs.
@@ -495,15 +505,17 @@ export class TodosShellComponent implements OnInit {
 ```
 The "todo" Feature Store will be created and destroyed together with the component.
 
+This works, because Feature Store uses Angular `DestroyRef` internally.
+
 In the Redux DevTools you can see that the "todo" Feature Store had been created and destroyed.
 
 Create:
 
-![devtools-feature-store-api--init.png](assets%2Fdevtools-feature-store-api--init.png)
+![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/y1d2i3nl3zx21nr1umuf.png)
 
 Destroy:
 
-![devtools-feature-store-api--destroy.png](assets%2Fdevtools-feature-store-api--destroy.png)
+![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/w4h1njkgz1wvvln0kl9p.png)
 
 ## Component Store
 
@@ -511,7 +523,7 @@ We have just seen, how Feature Stores can be used to manage local component stat
 
 With Component Stores you can manage state which should not become part of the global state object.
 
-Furthermore, Component Stores can be used as a performance optimization if you have very frequent state updates or many store instances. 
+Furthermore, Component Stores can be used as a performance optimization if you have very frequent state updates or many store instances.
 
 Component Store has the same API as Feature Store. Refactoring from Component Store to Feature Store and vice versa means changing two lines of code.
 ```ts
@@ -549,7 +561,8 @@ You can guess it already... for more complex component states you can use memoiz
 
 In modern Angular Observables and Signals will coexist.
 Therefore, modern Angular state management should help you to streamline the usage of Observables and Signals.
-That is exactly what MiniRx does in the Feature Store and Component Store APIs.
+MiniRx Signal Store APIs can handle both Observables and Signals.
+No conversion code is needed anymore (no `toSignal`, `toObservable`).
 
 ### `rxEffect`
 
@@ -657,8 +670,32 @@ export class ConnectDemoComponent {
 }
 ```
 
-### TODO
-Thanks to
+## Developer Preview
 
-contributors
-reviewers of the blogpost
+NOT!
+
+You can use MiniRx Signal Store version 1 in production! 
+It has tons of Unit Tests and there are several demos (see below).
+
+As in every software there can be bugs. We will fix them.
+BREAKING CHANGES come with a new major version.
+
+## Demos
+
+MiniRx was successfully tested in these projects:
+
+- [Angular Tetris](https://github.com/trungvose/angular-tetris/pull/45)
+- [Angular Jira Clone](https://github.com/trungvose/jira-clone-angular/pull/99)
+- [MiniRx Signal Store Demo](https://signal-store-demo.mini-rx.io/)
+
+
+###########################
+# TODO
+###########################
+- Write more about `connect`, show Redux DevTools with connected state
+- Some closing words
+- Thanks to
+  - contributors
+  - reviewers of the blogpost
+- Better example for memoized selectors which shows composing of selectors
+- First component store example should also show imports
