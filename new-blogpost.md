@@ -15,7 +15,6 @@ MiniRx Signal Store does exactly that.
     * **Signals** are used for **(synchronous) state**
     * **RxJS** is used for events and **asynchronous tasks**
 * Signal Store helps to **streamline your usage of [RxJS](https://rxjs.dev/) and [Signals](https://angular.io/guide/signals)**: e.g. `connect` and `rxEffect` understand both Signals and Observables
-* **Immutable Signal State**: Immutability can be enforced with the Immutable State extension
 * Signal Store is based on the same great concept as the original (RxJS-based) **[MiniRx Store](https://mini-rx.io/)**
     * **All-in-one solution** for global and local state, complex and simple state
     * Three well-defined state containers: **Store (Redux), Feature Store** and  **Component Store**
