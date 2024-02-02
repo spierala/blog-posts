@@ -1,13 +1,12 @@
 # Introducing MiniRx Signal Store
 
-With the arrival of [Signals](https://angular.io/guide/signals) in Angular 16, new best practices are arising for state and events. 
-In the future, Signals and Observables will coexist in your application.
+With the arrival of [Signals](https://angular.io/guide/signals) in Angular 16, new best practices are arising for state and events. In the future, Signals and Observables will coexist in your application.
 
 Modern Angular needs modern state management which promotes **new Angular best practices** and **streamlines the usage of Signals and Observables**...
 
 MiniRx Signal Store does exactly that.
 
-### Modern state management with MiniRx Signal Store:
+### Modern state management with MiniRx Signal Store
 
 * Signal Store **embraces [Angular Signals](https://angular.io/guide/signals)** and leverages **Modern Angular APIs** internally
 * Signal Store implements and promotes new **Angular best practices**:
@@ -92,7 +91,7 @@ A lot of code is shared internally:
 - Feature Store uses the existing Redux Store under the hood: If you use Feature Store already, and you start using the Redux Store later, the app bundle size will not increase significantly.
 - Feature Store and ComponentStore share the same methods (e.g. `connect` and `rxEffect`)
 
-_FYI_ MiniRx Signal Store if one of the most lightweight state management libraries in the [Angular state management bundle size comparison](https://github.com/spierala/angular-state-management-comparison).
+_FYI_ MiniRx Signal Store is one of the most lightweight state management libraries in the [Angular state management bundle size comparison](https://github.com/spierala/angular-state-management-comparison).
 
 ### Tree-shakeable
 MiniRx Signal Store is designed to be tree-shakeable as much as possible. If you use only the Component Store... nothing from the Redux Store will be part of the bundle.
@@ -126,7 +125,7 @@ MiniRx Signal Store definitely made the choice: it uses Angular Signal internall
 - Memoized selectors (used to select state from the global state object) are implemented using Angular `computed`
 
 ## RxJS
-You may ask: Why do we still need RxJS? We have Signals now!
+You may ask: _Why do we still need RxJS? We have Signals now!_
 
 It is true, we do not need RxJS anymore **for state**: it is time to say goodbye to `BehaviorSubject`!
 
@@ -285,7 +284,7 @@ When the component is destroyed, the stores are also destroyed. Also, any intern
 
 ## Framework-agnostic code
 If you look closer at the MiniRx Signal Store, you will see an interesting aspect:
-The Angular Signal APIs (`signal`, `computed`, `effect`, `toSignal`, `toObservable`) become (almost) an implementation detail of the MiniRx Signal Store.
+The Angular Signal APIs (`signal`, `computed`, `effect`, `toSignal`, `toObservable`) become (mostly) an implementation detail of the MiniRx Signal Store.
 Only the `select` methods return Signal. That's it. 
 
 In fact, with MiniRx Signal Store you are writing largely framework-agnostic code! MiniRx Signal Store code can be easily refactored to the framework-agnostic original MiniRx Store.
@@ -294,8 +293,7 @@ In fact, with MiniRx Signal Store you are writing largely framework-agnostic cod
 We have seen, MiniRx Signal Store is an incredibly flexible state management solution: 
 It does not matter if you manage global or local state, complex or simple state... MiniRx Signal Store has you covered!
 
-These are exciting times for Angular: old best-practices disappear, new ones appear...
-The opinionated nature of MiniRx Signal Store will help you find the right way through modern Angular.
+These are exciting times for Angular: old best-practices disappear, new ones appear... The opinionated nature of MiniRx Signal Store will help you find the right way through modern Angular.
 
 ## ⭐ MiniRx on GitHub
 Do you like MiniRx? Give it a GitHub star [here](https://github.com/spierala/mini-rx-store).
