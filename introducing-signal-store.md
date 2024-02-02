@@ -15,7 +15,7 @@ MiniRx Signal Store does exactly that.
     * **RxJS** is used for events and **asynchronous tasks**
 * Signal Store **streamlines your usage of [RxJS](https://rxjs.dev/) and [Signals](https://angular.io/guide/signals)**: e.g. `connect` and `rxEffect` understand both Signals and Observables
 * Signal Store is based on the same great concept as the original (RxJS-based) **[MiniRx Store](https://mini-rx.io/)**
-    * It is an **All-in-one solution** for global and local state, complex and simple state
+    * It is an **all-in-one solution** for global and local state, complex and simple state
     * You get three well-defined state containers: **Store (Redux), Feature Store** and  **Component Store**
     * **Highly flexible**: Do you build complex and more simple features in the same application? You can choose the right state container individually for each feature.
 
@@ -81,8 +81,8 @@ MiniRx Signal Store was designed as an all-in-one solution from the beginning. T
 - Feature Store automatically uses all the extensions of the Redux Store (e.g. Redux DevTools extension, ImmutableState extension)
 - Feature Store and Component Store share the same API
 - Learning one state container helps learning the rest of the bunch:
-  - E.g. you can undo state changes with the Undo Extension by dispatching an `undo` action: you can expect to have an `undo` method on Feature Store and Component Store!
   - Do you like the memoized selectors of the Redux Store? Feel free to use them with Feature Store and Component Store!
+  - Do you trigger API calls in effects using the Redux Store? You can be sure there will be something for effects in Feature Store and Component Store: `rxEffect`
   - Did you master the Feature Store API? You mastered Component Store at the same time! Both share the same API.
 
 ## Lightweight
@@ -96,7 +96,6 @@ _FYI_ MiniRx Signal Store if one of the most lightweight state management librar
 
 ### Tree-shakeable
 MiniRx Signal Store is designed to be tree-shakeable as much as possible. If you use only the Component Store... nothing from the Redux Store will be part of the bundle.
-
 
 # New Angular best-practices in MiniRx Signal Store
 
