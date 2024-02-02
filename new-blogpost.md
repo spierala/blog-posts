@@ -55,7 +55,7 @@ MiniRx Signal Store supports both classic Angular Module APIs (e.g. `StoreModule
 ### Easy refactor
 If you used the original MiniRx Store before, refactor to MiniRx Signal Store will be pretty straight-forward: 
 - change the TypeScript imports (import from `@mini-rx/signal-store` instead of `mini-rx-store`)
-- remove the Angular async pipes (and ugly non-null assertions (`!`)) from the template
+- `select` methods return Signal instead of Observable 
 
 In fact, it is possible to refactor to MiniRx Signal Store from traditional state management libraries like Akita or NgRx Store. A lot of MiniRx Signal Store APIs are very similar.
 
@@ -74,24 +74,29 @@ These are the typical use-cases:
 
 ![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/qj5anf3ibwrjw20yu6t0.png)
 
+## High level of integration
+MiniRx Signal Store was designed as an all-in-one solution from the beginning. This allows for a high level of integration:
+- Feature Store uses the Redux Store under the hood
+- Feature Store state integrates into the global state object of the Redux Store
+- Feature Store automatically uses all the extensions of the Redux Store (e.g. Redux DevTools extension, ImmutableState extension)
+- Feature Store and Component Store share the same API
+- Learning one state container helps learning the rest of the bunch:
+  - E.g. you can undo state changes with the Undo Extension by dispatching an `undo` action: you can expect to have an `undo` method on Feature Store and Component Store!
+  - Do you like the memoized selectors of the Redux Store? Feel free to use them with Feature Store and Component Store!
+  - Did you master the Feature Store API? You mastered Component Store at the same time! Both share the same API.
+
 ## Lightweight
-Because MiniRx Signal Store is a all-in-one solution, it can be a very **lightweight library**.
-E.g. Feature Store uses the Redux Store under the hood...  If you use Feature Store already, and you start using the Redux Store later, the app bundle size will not increase significantly.
+Because MiniRx Signal Store is an all-in-one solution, it can be a very **lightweight library**.
+
+A lot of code is shared internally:
+- Feature Store uses the existing Redux Store under the hood: If you use Feature Store already, and you start using the Redux Store later, the app bundle size will not increase significantly.
+- Feature Store and ComponentStore share the same methods (e.g. `connect` and `rxEffect`)
 
 _FYI_ MiniRx Signal Store if one of the most lightweight state management libraries in the [Angular state management bundle size comparison](https://github.com/spierala/angular-state-management-comparison).
 
 ### Tree-shakeable
 MiniRx Signal Store is designed to be tree-shakeable as much as possible. If you use only the Component Store... nothing from the Redux Store will be part of the bundle.
 
-## High level of integration
-MiniRx Signal Store was designed as a all-in-one solution from the beginning. This allows for a high level of integration:
-- Feature Store state integrates into the global state object of the Redux Store
-- Feature Stores automatically use all the extensions of the Redux Store
-- Feature Store and Component Store share the same API
-- Learning one state container helps learning the rest of the bunch:
-  - E.g. you can undo state changes with the Undo Extension by dispatching an `undo` action: you can expect to have an `undo` method on Feature Store and Component Store!
-  - Do you like the memoized selectors of the Redux Store? Feel free to use them with Feature Store and Component Store!
-  - Did you master the Feature Store API? You mastered Component Store at the same time!
 
 # New Angular best-practices in MiniRx Signal Store
 
@@ -148,7 +153,7 @@ When using RxJS-based streams, we can trigger side effects like API-calls and ha
 
 ### More operators
 There is no limit! More than 100 [operators](https://rxjs.dev/guide/operators) which can be used to manipulate your streams.
-But to be honest, a bunch of them will take you already far: `debounceTime`, `distinctUntilChanged`, `map`, `filter`, `catchError`, etc
+But to be honest, even a small bunch of operators will take you far: `debounceTime`, `distinctUntilChanged`, `map`, `filter`, `catchError`, etc
 
 ### RxJS in MiniRx Signal Store
 Did you see the strengths of RxJS? 
@@ -281,23 +286,22 @@ When the component is destroyed, the stores are also destroyed. Also, any intern
 
 ## Framework-agnostic code
 If you look closer at the MiniRx Signal Store, you will see an interesting aspect:
-The Angular Signal APIs become (almost) an implementation detail of the MiniRx Signal Store.
+The Angular Signal APIs (`signal`, `computed`, `effect`, `toSignal`, `toObservable`) become (almost) an implementation detail of the MiniRx Signal Store.
 Only the `select` methods return Signal. That's it. 
 
 In fact, with MiniRx Signal Store you are writing largely framework-agnostic code! MiniRx Signal Store code can be easily refactored to the framework-agnostic original MiniRx Store.
 
 ## Summary
-We have seen, MiniRx Signal Store is an incredibly flexible state management solution: It does not matter if you manage global or local state, complex or simple state. 
-MiniRx Signal Store has you covered!
+We have seen, MiniRx Signal Store is an incredibly flexible state management solution: 
+It does not matter if you manage global or local state, complex or simple state... MiniRx Signal Store has you covered!
 
 These are exciting times for Angular: old best-practices disappear, new ones appear...
-
 The opinionated nature of MiniRx Signal Store will help you find the right way through modern Angular.
 
 ## ⭐ MiniRx on GitHub
-If you like MiniRx, give it a star on its [GitHub repo](https://github.com/spierala/mini-rx-store).
+Do you like MiniRx? Give it a GitHub star [here](https://github.com/spierala/mini-rx-store).
 
-Thank you! 
+Thank you! :)
 
 ## Demos
 MiniRx Signal Store was successfully tested in these projects:
@@ -313,4 +317,5 @@ MiniRx Signal Store 1.0.0 was published today!
 - Thanks to blogpost reviewers / code reviewers
 - Mention immutable signal state?
 - Show Redux DevTools?
+- Revisit Summary
 - Release Signal Store v1 before publishing the blogpost! 
