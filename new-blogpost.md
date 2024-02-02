@@ -280,20 +280,16 @@ export class ConnectComponent {
 }
 ```
 
-## Angular Integration
-MiniRx Signal Store leverages modern Angular APIs internally... we mentioned Signal already, but there is more:
-
-### DestroyRef
+## Destroyable Stores
 With Angular `DestroyRef` Feature Stores and Component Stores know their creation context, and they get notified when the creation context is destroyed. 
 Now you can safely create Feature Stores and Component Stores inside your component code.
-When the component is destroyed, the stores are also destroyed. Also any internal subscriptions (e.g. from `rxEffect` or `connect`) will be unsubscribed.
+When the component is destroyed, the stores are also destroyed. Also, any internal subscriptions (e.g. from `rxEffect` or `connect`) will be unsubscribed.
 
+## Summary
+MiniRx Signal Store is a highly flexible state management solution. 
+It does not matter if you manage global or local state, complex or simple state. MiniRx Signal Store has you covered.
 
-## Immutable Signal State
-When using Angular Signals you can bypass the Signal update or set methods and mutate state at anytime.
-This can cause unexpected behaviour and bugs.
-MiniRx Signal Store comes with the ImmutableState Extension to prevent mutations.
-If you accidentally mutate the state, an error will be thrown in the JS console.
+The opinionated nature of MiniRx Signal Store will help you to follow new Angular best-practices (Signal for state, RxJS for events and async tasks).
 
 ## Demos
 MiniRx Signal Store was successfully tested in these projects:
@@ -306,4 +302,7 @@ MiniRx Signal Store was successfully tested in these projects:
 MiniRx Signal Store 1.0.0 was published today!
 
 # TODO
-- Easy migration from other state management libs
+- Thanks to blogpost reviewers / code reviewers
+- Mention immutable signal state
+- Summary can be better for sure
+- Release Signal Store v1 before publishing the blogpost! 
