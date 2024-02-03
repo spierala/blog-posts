@@ -244,7 +244,7 @@ You saw MiniRx exploring Signals and RxJS. MiniRx Signal Store is the result of 
 MiniRx Signal Store is an incredibly flexible state management solution:
 It does not matter if you manage global or local state, complex or simple state... MiniRx Signal Store has you covered!
 
-With its flexibility and new Angular best practices on board, MiniRx Signal Store navigates you through modern Angular!
+With its flexibility and new Angular best practices on board, MiniRx Signal Store will navigate you through modern Angular!
 
 ## ⭐ MiniRx on GitHub
 Do you like MiniRx? Give it a GitHub star [here](https://github.com/spierala/mini-rx-store).
