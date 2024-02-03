@@ -1,13 +1,20 @@
 # Introducing MiniRx Signal Store
 
-With the arrival of [Signals](https://angular.io/guide/signals) in Angular 16, new best practices are arising for state and events. In the future, Signals and Observables will coexist in your application.
+In Angular 16, we got a new cool and shiny reactive primitive: [Signal](https://angular.io/guide/signals).
 
-Modern Angular needs modern state management which promotes **new Angular best practices** and **streamlines the usage of Signals and Observables**...
+The introduction of Angular Signals is probably one of the most disruptive changes in recent years:
+- RxJS is no more?
+- Should I avoid RxJS and use Signals for everything? 
+- Can Signals and RxJS Observables co-exist?
+- Are there new Angular best practices?
 
-MiniRx Signal Store does exactly that.
+With these questions in mind, MiniRx started exploring Signals, on the search for new Angular best practices.
 
-### Modern state management with MiniRx Signal Store
+The result is a new Signal-based state management library:
 
+**MiniRx Signal Store**
+
+* Signal Store is an **Angular-only** state management library
 * Signal Store **embraces [Angular Signals](https://angular.io/guide/signals)** and leverages **Modern Angular APIs** internally
 * Signal Store implements and promotes new **Angular best practices**:
     * **Signals** are used for **(synchronous) state**
@@ -31,70 +38,6 @@ To install the @mini-rx/signal-store package, use your package manager of choice
 
 #### API documentation
 The MiniRx Signal Store API is documented in the [README](https://github.com/spierala/mini-rx-store/blob/master/libs/signal-store/README.md).
-
-# Evolution
-...instead of revolution! MiniRx tries to make the transition to signal-based state management as smooth as possible:
-- There is no need to learn new concepts (most MiniRx Signal Store concepts are known from traditional RxJS-based state management libraries)
-- MiniRx Signal Store APIs are very similar to the original (RxJS-based) MiniRx Store
-
-### OOP-style
-MiniRx Signal Store supports the good old **Object-oriented programming** style which many people appreciate in Angular.
-
-`class MyStore extends FeatureStore<ProductState>{}`
-
-### Functional style
-You can use functional creation methods when extending a class would feel like overkill:
-e.g. if you want to create a little store just inline in your component code.
-
-`createFeatureStore`, `createComponentStore`
-
-### Classic Module APIs and modern Standalone APIs
-MiniRx Signal Store supports both classic Angular Module APIs (e.g. `StoreModule.forRoot()`) and modern Standalone APIs (e.g. `provideStore`).
-
-### Easy refactor
-If you used the original MiniRx Store before, refactor to MiniRx Signal Store will be pretty straight-forward: 
-- change the TypeScript imports (import from `@mini-rx/signal-store` instead of `mini-rx-store`)
-- `select` methods return Signal instead of Observable 
-
-In fact, it is possible to refactor to MiniRx Signal Store from traditional state management libraries like Akita or NgRx Store. A lot of MiniRx Signal Store APIs are very similar.
-
-# All-in-one solution
-MiniRx Signal Store is an all-in-one solution and offers three different well-defined state containers out of the box:
-
-* Manage **global** state at large scale with the **[Store (Redux) API](https://github.com/spierala/mini-rx-store/blob/master/libs/signal-store/README.md#redux-api)**
-* Manage **global** state with a minimum of boilerplate using **[Feature Stores](https://github.com/spierala/mini-rx-store/blob/master/libs/signal-store/README.md#feature-store-api)**
-* Manage **local** component state with **[Component Stores](https://github.com/spierala/mini-rx-store/blob/master/libs/signal-store/README.md#component-store-api)**
-
-## Flexibility
-All three state containers can be easily used together in your application.
-Depending on the use-case, you can choose the state container which suits your needs.
-
-These are the typical use-cases:
-
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/qj5anf3ibwrjw20yu6t0.png)
-
-## High level of integration
-MiniRx Signal Store was designed as an all-in-one solution from the beginning. This allows for a high level of integration:
-- Feature Store uses the Redux Store under the hood
-- Feature Store state integrates into the global state object of the Redux Store
-- Feature Store automatically uses all the extensions of the Redux Store (e.g. Redux DevTools extension, ImmutableState extension)
-- Feature Store and Component Store share the same API
-- Learning one state container helps learning the rest of the bunch:
-  - Do you like the memoized selectors of the Redux Store? Feel free to use them with Feature Store and Component Store!
-  - Do you trigger API calls in effects using the Redux Store? You can be sure there will be something for effects in Feature Store and Component Store: `rxEffect`
-  - Did you master the Feature Store API? You mastered Component Store at the same time! Both share the same API.
-
-## Lightweight
-Because MiniRx Signal Store is an all-in-one solution, it can be a very **lightweight library**.
-
-A lot of code is shared internally:
-- Feature Store uses the existing Redux Store under the hood: If you use Feature Store already, and you start using the Redux Store later, the app bundle size will not increase significantly.
-- Feature Store and ComponentStore share the same methods (e.g. `connect` and `rxEffect`)
-
-_FYI_ MiniRx Signal Store is one of the most lightweight state management libraries in the [Angular state management bundle size comparison](https://github.com/spierala/angular-state-management-comparison).
-
-### Tree-shakeable
-MiniRx Signal Store is designed to be tree-shakeable as much as possible. If you use only the Component Store... nothing from the Redux Store will be part of the bundle.
 
 # New Angular best-practices in MiniRx Signal Store
 
@@ -277,23 +220,31 @@ export class ConnectComponent {
 }
 ```
 
-## Destroyable Stores
-By using Angular `DestroyRef` internally, Feature Stores and Component Stores know their creation context... they will get notified when the creation context is destroyed. 
-Now you can safely create Feature Stores and Component Stores inside your component code.
-When the component is destroyed, the stores are also destroyed. Also, any internal subscriptions (e.g. from `rxEffect` or `connect`) will be unsubscribed.
+# All-in-one solution
+With MiniRx Signal Store you get three well-defined state containers out of the box:
 
-## Framework-agnostic code
-If you look closer at the MiniRx Signal Store, you will see an interesting aspect:
-The Angular Signal APIs (`signal`, `computed`, `effect`, `toSignal`, `toObservable`) become (mostly) an implementation detail of the MiniRx Signal Store.
-Only the `select` methods return Signal. That's it. 
+* Manage **global** state at large scale with the **[Store (Redux) API](https://github.com/spierala/mini-rx-store/blob/master/libs/signal-store/README.md#redux-api)**
+* Manage **global** state with a minimum of boilerplate using **[Feature Stores](https://github.com/spierala/mini-rx-store/blob/master/libs/signal-store/README.md#feature-store-api)**
+* Manage **local** component state with **[Component Stores](https://github.com/spierala/mini-rx-store/blob/master/libs/signal-store/README.md#component-store-api)**
 
-In fact, with MiniRx Signal Store you are writing largely framework-agnostic code! MiniRx Signal Store code can be easily refactored to the framework-agnostic original MiniRx Store.
+The MiniRx Signal Store API is documented in the [README](https://github.com/spierala/mini-rx-store/blob/master/libs/signal-store/README.md).
+
+## Flexibility
+All three state containers can be easily used together in your application.
+Depending on the use-case, you can choose the state container which suits your needs.
+
+These are the typical use-cases:
+
+![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/qj5anf3ibwrjw20yu6t0.png)
 
 ## Summary
-We have seen, MiniRx Signal Store is an incredibly flexible state management solution: 
+These are exciting times for Angular: old best-practices disappear, new ones have to be explored.
+You saw MiniRx exploring Signals and RxJS. MiniRx Signal Store is the result of that exploration.
+
+MiniRx Signal Store is an incredibly flexible state management solution:
 It does not matter if you manage global or local state, complex or simple state... MiniRx Signal Store has you covered!
 
-These are exciting times for Angular: old best-practices disappear, new ones appear... The opinionated nature of MiniRx Signal Store will help you find the right way through modern Angular.
+With its flexibility and new Angular best practices on board, MiniRx Signal Store navigates you through modern Angular!
 
 ## ⭐ MiniRx on GitHub
 Do you like MiniRx? Give it a GitHub star [here](https://github.com/spierala/mini-rx-store).
@@ -312,7 +263,4 @@ MiniRx Signal Store 1.0.0 was published today!
 
 # TODO
 - Thanks to blogpost reviewers / code reviewers
-- Mention immutable signal state?
-- Show Redux DevTools?
-- Revisit Summary
 - Release Signal Store v1 before publishing the blogpost! 
