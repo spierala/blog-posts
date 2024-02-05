@@ -39,10 +39,10 @@ To install the @mini-rx/signal-store package, use your package manager of choice
 #### API documentation
 The MiniRx Signal Store API is documented in the [README](https://github.com/spierala/mini-rx-store/blob/master/libs/signal-store/README.md).
 
-# New Angular best-practices in MiniRx Signal Store
+# New Angular best practices in MiniRx Signal Store
 
-The MiniRx Signal Store is implemented using new Angular best-practices.
-At the same time MiniRx Signal Store also promotes these best-practices in its new API:
+The MiniRx Signal Store is implemented using new Angular best practices.
+At the same time MiniRx Signal Store also promotes these best practices in its new API:
 * **Signals** are used for **(synchronous) state**
 * **RxJS** is used for events and **asynchronous tasks**
 
@@ -240,7 +240,7 @@ See here the most typical use-cases:
 ![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/qj5anf3ibwrjw20yu6t0.png)
 
 ## Summary
-These are exciting times for Angular: old best-practices disappear, new ones have to be explored.
+These are exciting times for Angular: old best practices disappear, new ones have to be explored.
 You saw MiniRx exploring Signals and RxJS. MiniRx Signal Store is the result of that exploration.
 
 MiniRx Signal Store is an incredibly flexible state management solution:
