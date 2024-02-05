@@ -81,9 +81,9 @@ Signals are **not suited for events**, because it is possible to miss events. Se
 
 [StackBlitz](https://stackblitz.com/edit/stackblitz-starters-6qbfus?file=src%2Fmain.ts)
 
-You might expect to see all state changes logged in `effect`, but that is not the case if Signal state is changed **synchronously**!
+You might expect to see all state changes logged in `effect`, but that is not the case if Signal state is changed **synchronously**...
 
-With a **RxJS Subject** we will be notified about **every** event (also the synchronous ones).
+**RxJS Subject** is the better alternative: we are notified about **every** event (also the synchronous ones). See this example:
 
 ![event-with-subject.png](assets%2Fevent-with-subject.png)
 
@@ -93,16 +93,18 @@ With a **RxJS Subject** we will be notified about **every** event (also the sync
 When using RxJS-based streams, we can trigger side effects like API-calls and handle race-conditions with RxJS flattening operators (`mergeMap`, `switchMap`, `concatMap`, `exhaustMap`).
 
 ### More operators
-There is no limit! More than 100 [operators](https://rxjs.dev/guide/operators) which can be used to manipulate your streams.
+There is no limit! RxJS has more than 100 [operators](https://rxjs.dev/guide/operators) which can be used to manipulate your streams.
 But to be honest, even a small bunch of operators will take you far: `debounceTime`, `distinctUntilChanged`, `map`, `filter`, `catchError`, etc
 
 ### RxJS in MiniRx Signal Store
 Did you see the strengths of RxJS? 
 
 MiniRx Signal Store made its choice... use RxJS for events and asynchronous tasks:
-- The Action stream of the (Redux) Store: implemented as RxJS Subject
-- Effects: pipe the Action stream to trigger API calls (and use flattening operators to handle race-conditions)
-- The `rxEffect` APIs of Feature Store and Component Store are based on RxJS Subject 
+- The Action stream of the (Redux) Store represents a stream of Events: it is implemented as RxJS Subject
+- Effects: you can `pipe` the Action stream to trigger API calls (and use flattening operators to handle race-conditions)
+- The `rxEffect` APIs of Feature Store and Component Store are based on RxJS Subject
+
+Fun fact: even the Component Store uses a small Redux implementation... it has its own (RxJS Subject) Action Stream.
 
 # RxJS and Signal Interop
 
@@ -233,7 +235,7 @@ The MiniRx Signal Store API is documented in the [README](https://github.com/spi
 All three state containers can be easily used together in your application.
 Depending on the use-case, you can choose the state container which suits your needs.
 
-These are the typical use-cases:
+See here the most typical use-cases:
 
 ![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/qj5anf3ibwrjw20yu6t0.png)
 
@@ -253,7 +255,6 @@ Thank you! :)
 
 ## Demos
 MiniRx Signal Store was successfully tested in these projects:
-
 - [Angular Tetris](https://github.com/trungvose/angular-tetris/pull/45)
 - [Angular Jira Clone](https://github.com/trungvose/jira-clone-angular/pull/99)
 - [MiniRx Signal Store Demo](https://signal-store-demo.mini-rx.io/)
@@ -261,6 +262,6 @@ MiniRx Signal Store was successfully tested in these projects:
 ## Release
 MiniRx Signal Store 1.0.0 was published today!
 
-# TODO
-- Thanks to blogpost reviewers / code reviewers
-- Release Signal Store v1 before publishing the blogpost! 
+## Thanks
+Special thanks for reviewing this blog post:
+- Tomasz Ducin: [twitter](https://twitter.com/tomasz_ducin), [ducin.dev](http://ducin.dev)
