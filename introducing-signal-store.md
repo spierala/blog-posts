@@ -1,5 +1,3 @@
-# Introducing MiniRx Signal Store
-
 In Angular 16, we got a new cool and shiny reactive primitive: [Signal](https://angular.io/guide/signals).
 
 The introduction of Angular Signals is probably one of the most disruptive changes in recent years:
