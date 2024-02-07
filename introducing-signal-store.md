@@ -260,7 +260,7 @@ MiniRx Signal Store was successfully tested in these projects:
 - [MiniRx Signal Store Demo](https://signal-store-demo.mini-rx.io/)
 
 ## Release
-MiniRx Signal Store 1.0.0 was published today!
+[MiniRx Signal Store 1.0.0](https://www.npmjs.com/package/@mini-rx/signal-store) was published today!
 
 ## Thanks
 Special thanks for reviewing this blog post:
