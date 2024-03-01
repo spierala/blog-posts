@@ -32,6 +32,7 @@ There are many reasons why MiniRx Signal Store is a great state management solut
 10. **Framework-agnostic code**: Although MiniRx Signal Store is an Angular library, your state management code is almost framework-agnostic. Signals are an internal implementation detail of the Signal Store. Therefore, you can easily refactor your state management layer to the original (RxJS-based) [MiniRx Store](https://mini-rx.io/) and use it in whatever framework you want (e.g. Svelte).
 
 ### You can try MiniRx Signal Store today
+Install:
 
 `npm i @mini-rx/signal-store`
 
