@@ -32,13 +32,13 @@ FYI Signal Inputs are the recommended way for new projects. From the [Angular do
 
 ![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/y8uorrbgpt7rqo9k76uf.png)
 
-Let's refactor our classic Angular @Input to an Signal Input:
+Let's refactor our classic Angular @Input to a Signal Input:
 ```ts
 user = input.required<User>();
 ```
 
 ### Signal Input object value and [(ngModel)]
-The Signal Input receives an object of type User. We try to bind to the object properties with `[(ngModel)]`
+The Signal Input receives an object of type User. We try to bind to the object properties with `[(ngModel)]`.
 
 This code looks so nice 😍!
 ```html
@@ -51,7 +51,6 @@ This code looks so nice 😍!
   />
 </div>
 ```
-
 And in this StackBlitz everything seems to work: [Form with Signal Input - mutating Signal State](https://stackblitz.com/edit/stackblitz-starters-6zwfbthj?file=src%2Fmain.ts)
 
 ### ‼️ Danger Zone: 
@@ -59,16 +58,16 @@ But wait..., we have just entered the danger zone... ☢️ ☣️ ⚠️
 
 What is actually happening?
 
-- `user()` unwraps the Input Signal. We get hold of the raw user object. 
-- This line of code `[(ngModel)]="user().firstName"` will **mutate** the user object (which is wrapped into a Signal) whenever the text input value changes.
+- `user()` unwraps the Input Signal. We get hold of the raw user object
+- This line of code `[(ngModel)]="user().firstName"` will **mutate** the user object (which is wrapped into a Signal) whenever the text input value changes
 
 ### ☢️ Mutating the Signal object ☣️
-Why is mutating the Signal state a bad idea? Because we are bypassing the Signals public API to update state. Normally we should only use the dedicated methods `set` or `update` to update the Signal state.
+Why is mutating the Signal state a bad idea? Because we are bypassing the Signals public API to update state. Normally we should only use the dedicated methods `set` or `update` in order to update the Signal state.
 
 Other developers might want to build other Signals on top of the `user` Signal with Angular `computed`. But computed will never be triggered because the `user` Signal does not know about the user object mutations. This might be a surprising behavior.
 
 ### Signal Inputs are read-only
-And yes, there is another reason, why using `[(ngModel)]` on an Signal Input is at least strange. Signal Inputs are supposed to be read-only. They do not have a `set` or `update` method - so there is no official support for changing Signal Input state programatically.
+And yes, there is another reason, why using `[(ngModel)]` on a Signal Input is at least strange. Signal Inputs are supposed to be read-only. They do not have a `set` or `update` method - so there is no official support for changing Signal Input state programmatically.
 
 ### Rescue
 Let's try to escape as fast as possible 🚀. What are possible solutions?
@@ -112,7 +111,7 @@ PROs
 - object clone is not needed
 
 CONs
-- There is some boilerplate needed: Linked Signal setup, ngModel, ngModelChange, method for state update
+- There is some boilerplate necessary: Linked Signal setup, ngModel, ngModelChange, method for state update
 - At the moment, Linked Signal is still in developer preview (Angular 19)
 
 StackBlitz: [Form with Signal Input - Linked Signal](https://stackblitz.com/edit/stackblitz-starters-yhhtnn73?file=src%2Fmain.ts)
@@ -147,7 +146,7 @@ export class UserDetailComponent {
 In the template we can mutate the raw object as we always did. 
 
 PROs
-- The template is identical to our original old-school form component which used an classic Angular @Input
+- The template is identical to our original old-school form component which used a classic Angular @Input
 - We officially mutate a raw object (we do not bypass Signal APIs, we do not mutate the read-only Signal Input state).
 
 CONs
@@ -159,7 +158,7 @@ StackBlitz: [Form with Signal Input - Effect](https://stackblitz.com/edit/stackb
 
 ## @let approach
 
-With [@let](https://angular.dev/guide/templates/variables#local-template-variables-with-let) we can declare variables in the template.
+With [@let](https://angular.dev/guide/templates/variables#local-template-variables-with-let), we can declare variables in the template.
 
 Let's use @let to get the raw object from the user Signal Input. Additionally, we can also perform the clone with our structuredClone pipe.
 
@@ -184,7 +183,7 @@ export class UserDetailComponent {
 ```
 
 PROs
-- Minimum boilerplate, and smallest code change in comparison the the old-school (@Input) form component
+- Minimum boilerplate, and smallest code change in comparison the old-school (@Input) form component
 - @let is the single place to let the magic happen (unwrap the Signal, clone)
 
 CONs
@@ -210,11 +209,8 @@ The "@let approach" seems to be the most straight-forward solution with a minimu
 
 Effect and Linked Signal are also valid options, but require more setup.
 
+We are still evaluating which approach is most suited for our applications and this blogpost should help us to make a good decision.
+
 I hope that you enjoyed our short visit to the danger zone of mutating Signal state. What do you think of my escape strategies? I am sure there are even more options. Let me know in the comments.
 
 Thank you!
-
-
-
-
-
